@@ -565,7 +565,8 @@ const BAND = {
     { title:"Behind the scenes: rehearsal", sub:"Coming soon" },
   ],
   merch: [
-    { name:"Neon Star Tee",     price:"$25", kind:"tee",    color:"#ff3df2" },
+    // image: a picture of the item (put it in img/merch/). Without one, a simple drawing is shown.
+    { name:"NYTEGAZE Logo Tee", price:"$25", kind:"tee",    color:"#7cc4ff", image:"img/merch/nytegaze-logo-tee.jpg", note:"Black tee with the galaxy NYTEGAZE logo. Mockup, final print may vary." },
     { name:"Night Crew Hoodie", price:"$45", kind:"hoodie", color:"#3df6ff" },
     { name:"Logo Sticker Pack", price:"$5",  kind:"sticker",color:"#ffd86b" },
     { name:"Tour Poster",       price:"$15", kind:"poster", color:"#9b6bff" },
@@ -1028,12 +1029,12 @@ const MERCH_SVG={
 };
 let notifs=store.get("merchN",[]);
 function renderMerch(){ $("#merch").innerHTML=BAND.merch.map((m,i)=>`<div class="merch-item tap" data-merch="${i}" style="cursor:pointer">
-  <div class="merch-img" style="background:radial-gradient(circle,${m.color}33,transparent 70%)">${MERCH_SVG[m.kind](m.color)}<span class="pill soon" style="background:rgba(0,0,0,.5)">Soon</span></div>
+  <div class="merch-img" style="background:radial-gradient(circle,${m.color}33,transparent 70%)">${m.image?`<img src="${esc(m.image)}" alt="${esc(m.name)}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">`:MERCH_SVG[m.kind](m.color)}<span class="pill soon" style="background:rgba(0,0,0,.5);z-index:2">Soon</span></div>
   <div class="info"><b>${esc(m.name)}</b><span class="mono" style="color:${m.color}">${esc(m.price)}</span>${notifs.includes(i)?`<span class="muted" style="float:right;font-size:12px">✓ notify</span>`:""}</div></div>`).join(""); }
 document.addEventListener("click",e=>{ const m=e.target.closest("[data-merch]"); if(!m) return; const i=+m.dataset.merch, it=BAND.merch[i]; SFX.open();
-  openSheet(`<div class="merch-img" style="border-radius:18px;background:radial-gradient(circle,${it.color}44,transparent 70%);margin-bottom:14px">${MERCH_SVG[it.kind](it.color)}</div>
+  openSheet(`<div class="merch-img" style="border-radius:18px;background:radial-gradient(circle,${it.color}44,transparent 70%);margin-bottom:14px">${it.image?`<img src="${esc(it.image)}" alt="${esc(it.name)}" style="width:100%;display:block;border-radius:18px;cursor:zoom-in" onclick="openLB([{kind:'photo',src:'${esc(it.image)}',cap:'${esc(it.name)}'}],0)">`:MERCH_SVG[it.kind](it.color)}</div>
   <h1 class="big" style="margin:0">${esc(it.name)}</h1><div class="mono" style="color:${it.color};font-size:20px;margin:4px 0 10px">${esc(it.price)}</div>
-  <p class="muted">Sizes S–XXL · Ships soon. Tap below and we'll let you know the moment it drops.</p>
+  ${it.note?`<p class="muted" style="margin-bottom:6px">${esc(it.note)}</p>`:""}<p class="muted">Sizes S–XXL · Ships soon. Tap below and we'll let you know the moment it drops.</p>
   <div class="row" style="margin:14px 0">${["S","M","L","XL","XXL"].map(s=>`<button class="btn ghost" style="padding:8px 12px" onclick="this.parentNode.querySelectorAll('button').forEach(b=>b.style.borderColor='');this.style.borderColor='${it.color}';SFX.tap()">${s}</button>`).join("")}</div>
   <button class="btn full" onclick="notifyMerch(${i})">${notifs.includes(i)?"✓ You'll be notified":"Notify me when it drops"}</button>`); });
 function notifyMerch(i){ if(!notifs.includes(i)){ notifs.push(i); store.set("merchN",notifs);} SFX.win(); confetti(25); closeSheet(); renderMerch(); toast("You're on the list ✦"); }
@@ -1133,7 +1134,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-25";
+const APP_BUILD="2026.11.15-26";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
