@@ -554,9 +554,9 @@ const BAND = {
   ],
   // Add  src:"music/song.mp3"  to play a real file. Tracks without src play a built-in demo loop.
   tracks: [
-    // bg:true = plays softly in the background after "tap to enter". loop:true = repeats.
-    { title:"Night Menu", type:"original", sub:"App theme · 8-bit", src:"music/night-menu.mp3", bg:true, loop:true },
-    { title:"Beat It", type:"cover", sub:"Cover · Michael Jackson · Instrumental", src:"music/beat-it-cover.mp3" },
+    // bg:true = part of the soft background shuffle after "tap to enter" (a random bg song plays, then another, never the same twice in a row).
+    { title:"Night Menu", type:"original", sub:"App theme · 8-bit", src:"music/night-menu.mp3", bg:true },
+    { title:"Beat It", type:"cover", sub:"Cover · Michael Jackson · Instrumental", src:"music/beat-it-cover.mp3", bg:true },
   ],
   pollOptions: ["Cover idea #1","Cover idea #2","Cover idea #3","Cover idea #4"],
   // Add  src:"video/clip.mp4"  for real videos
@@ -903,22 +903,27 @@ function play(i,offset=0,background=false){
   stopDemo(); audio.pause(); bgMode=background;
   if(isReal(t)){ if(!mediaSrc){ mediaSrc=AC.createMediaElementSource(audio); musicGain=AC.createGain(); mediaSrc.connect(musicGain).connect(getAnalyser()); }
     musicGain.gain.setTargetAtTime(background?.35:1,AC.currentTime,background?.8:.05);
-    audio.loop=!!t.loop;
+    audio.loop=!!t.loop || (background && allTracks().filter(x=>x.bg&&x.src).length<2);
     if(!audio.src.endsWith(t.src)) audio.src=t.src; audio.currentTime=offset; audio.play().catch(()=>{ if(!background) toast("Couldn't play that file"); }); }
   else startDemo(t.demo||0,offset);
   playing=true; if(!background) completeTask("listen"); updatePlayer();
 }
 // Soft background music: starts after the first tap (phones block sound before that)
+// Background shuffle: pick a random bg song, never the one that just played (when there's a choice).
+let lastBg=-1;
+function randomBg(){ const L=allTracks(), pool=L.map((t,i)=>i).filter(i=>L[i].bg&&L[i].src);
+  if(!pool.length) return -1; const choices=pool.length>1?pool.filter(i=>i!==lastBg):pool;
+  return choices[Math.floor(Math.random()*choices.length)]; }
 function startBgm(){
-  if(!sfxOn||playing) return; const i=allTracks().findIndex(t=>t.bg&&t.src); if(i<0) return;
-  if(musicGain) musicGain.gain.value=0; play(i,0,true);
+  if(!sfxOn||playing) return; const i=randomBg(); if(i<0) return;
+  if(musicGain) musicGain.gain.value=0; lastBg=i; play(i,0,true);
 }
 function pause(){ if(!playing) return; const t=allTracks()[cur]; if(isReal(t)) audio.pause(); else { pausedAt=AC.currentTime-seqStart; stopDemo(); } playing=false; updatePlayer(); }
 let pausedAt=0;
 function toggle(){ SFX.tap(); if(playing) pause(); else { const t=allTracks()[cur]; play(cur, isReal(t)?audio.currentTime:pausedAt); } }
 function nextTrack(){ pausedAt=0; play(cur+1); }
 function prevTrack(){ pausedAt=0; play(cur-1); }
-audio.onended=nextTrack;
+audio.onended=()=>{ if(bgMode){ const i=randomBg(); if(i>=0){ lastBg=i; pausedAt=0; play(i,0,true); return; } } nextTrack(); };
 const PLAY='<svg viewBox="0 0 24 24" fill="#fff"><path d="M7 4v16l13-8z"/></svg>', PAUSE='<svg viewBox="0 0 24 24" fill="#fff"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
 function updateMediaSession(t){ try{ if(!("mediaSession" in navigator)) return;
   navigator.mediaSession.metadata=new MediaMetadata({title:t.title,artist:"NYTEGAZE",album:t.sub||"",artwork:[{src:"img/icon-512.png",sizes:"512x512",type:"image/png"}]});
@@ -1128,7 +1133,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-24";
+const APP_BUILD="2026.11.15-25";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
