@@ -539,10 +539,7 @@ const BAND = {
   tracks: [
     // bg:true = plays softly in the background after "tap to enter". loop:true = repeats.
     { title:"Night Menu", type:"original", sub:"App theme · 8-bit", src:"music/night-menu.mp3", bg:true, loop:true },
-    { title:"Neon Constellations", type:"original", sub:"Original · Coming soon", demo:0 },
-    { title:"After Hours Signal",  type:"original", sub:"Original · Demo",        demo:1 },
-    { title:"Cover Song Title",    type:"cover",    sub:"Cover · Original artist",demo:2 },
-    { title:"Another Cover",       type:"cover",    sub:"Cover · Original artist",demo:3 },
+    { title:"Beat It", type:"cover", sub:"Cover · Michael Jackson · Instrumental", src:"music/beat-it-cover.mp3" },
   ],
   pollOptions: ["Cover idea #1","Cover idea #2","Cover idea #3","Cover idea #4"],
   // Add  src:"video/clip.mp4"  for real videos
@@ -920,9 +917,10 @@ function renderTracks(){
     <span class="n">${i===cur&&playing?"♪":String(i+1).padStart(2,"0")}</span><div class="art" style="width:44px;height:44px;border-radius:10px;${artCss(i)}"></div>
     <div class="t"><b>${esc(t.title)}</b><small>${esc(t.sub)}</small></div></div>`;}).join("");
 }
-function renderHomeTrack(){ const t=BAND.tracks[0];
-  $("#homeTrack").innerHTML=`<div class="np"><div class="art ${playing&&cur===(userTrack?1:0)?"spin":""}" style="width:64px;height:64px;${artCss(userTrack?1:0)}"></div><div style="flex:1"><b style="font-size:18px">${esc(t.title)}</b><div class="muted">${esc(t.sub)}</div></div><div class="play" style="width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#3346ff,#7b5cff 60%,#ff6fd8)">${playing&&cur===(userTrack?1:0)?PAUSE:PLAY}</div></div>`; }
-$("#homeTrack").onclick=()=>{ const i=userTrack?1:0; if(playing&&cur===i) pause(); else { pausedAt=0; play(i);} };
+const latestIdx=()=>{ const t=BAND.tracks.find(x=>!x.bg)||BAND.tracks[0]; return allTracks().indexOf(t); };
+function renderHomeTrack(){ const i=latestIdx(), t=allTracks()[i], on=playing&&cur===i;
+  $("#homeTrack").innerHTML=`<div class="np"><div class="art ${on?"spin":""}" style="width:64px;height:64px;${artCss(i)}"></div><div style="flex:1"><b style="font-size:18px">${esc(t.title)}</b><div class="muted">${esc(t.sub)}</div></div><div class="play" style="width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#3346ff,#7b5cff 60%,#ff6fd8)">${on?PAUSE:PLAY}</div></div>`; }
+$("#homeTrack").onclick=()=>{ const i=latestIdx(); if(playing&&cur===i) pause(); else { pausedAt=0; play(i);} };
 document.addEventListener("click",e=>{ const p=e.target.closest("[data-play]"); if(p){ const i=+p.dataset.play; if(i===cur&&playing) pause(); else { pausedAt=0; play(i);} } });
 $("#playBtn").onclick=toggle; $("#miniPlay").onclick=toggle; $("#next").onclick=()=>{SFX.tap();nextTrack();}; $("#prev").onclick=()=>{SFX.tap();prevTrack();};
 $("#musicSeg").onclick=e=>{ const b=e.target.closest("button"); if(!b) return; filter=b.dataset.f; $("#musicSeg").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b)); SFX.tap(); renderTracks(); };
@@ -1109,7 +1107,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-15";
+const APP_BUILD="2026.11.15-16";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
