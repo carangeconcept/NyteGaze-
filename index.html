@@ -432,7 +432,7 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
    ========================================================= */
 const BAND = {
   name: "NYTEGAZE",
-  bio: "NYTEGAZE is a five-piece band chasing the glow between midnight and morning. Big guitars, bigger choruses, and a sky full of neon. Swap this text for your real story.",
+  bio: "NYTEGAZE is a five-piece band chasing the glow between midnight and morning. Big guitars, bigger choruses, and a sky full of neon.",
   bookingEmail: "booking@nytegaze.com",
   socials: [
     { name:"Instagram", url:"https://instagram.com/" },
@@ -442,27 +442,21 @@ const BAND = {
     { name:"YouTube",   url:"https://youtube.com/" },
     { name:"Email",     url:"mailto:booking@nytegaze.com" },
   ],
+  /* MEMBERS
+     photo:  their profile picture (put it in img/members/). Leave "" to show their initial.
+     photos: more pictures for their page. Repo files or Google Drive links, same as show media.
+     facts / socials: leave empty {} or [] and that part is hidden.                          */
   members: [
-    { id:"vox",  name:"Vocalist Name",  role:"Vocals",       color:"#ff7fd6",
-      bio:"The voice of NYTEGAZE. Replace with their story: where they grew up, how they found music, what they're listening to right now.",
-      facts:{ "Influences":"Add 2–3 artists", "Fave song to play":"Add one", "Gear":"Mic of choice", "Fun fact":"Add something weird" },
-      socials:[{name:"Instagram",url:"https://instagram.com/"},{name:"TikTok",url:"https://tiktok.com/"}] },
-    { id:"gtr1", name:"Guitarist One",  role:"Lead Guitar",  color:"#7cc4ff",
-      bio:"Lead guitar. Replace with their bio.",
-      facts:{ "Influences":"Add 2–3 artists", "Fave song to play":"Add one", "Gear":"Guitar + amp", "Fun fact":"Add something weird" },
-      socials:[{name:"Instagram",url:"https://instagram.com/"}] },
-    { id:"gtr2", name:"Guitarist Two",  role:"Rhythm Guitar",color:"#a58cff",
-      bio:"Rhythm guitar. Replace with their bio.",
-      facts:{ "Influences":"Add 2–3 artists", "Fave song to play":"Add one", "Gear":"Guitar + amp", "Fun fact":"Add something weird" },
-      socials:[{name:"Instagram",url:"https://instagram.com/"}] },
-    { id:"bass", name:"Bassist Name",   role:"Bass",         color:"#5d78ff",
-      bio:"Holds down the low end. Replace with their bio.",
-      facts:{ "Influences":"Add 2–3 artists", "Fave song to play":"Add one", "Gear":"Bass + rig", "Fun fact":"Add something weird" },
-      socials:[{name:"Instagram",url:"https://instagram.com/"}] },
-    { id:"drums",name:"Drummer Name",   role:"Drums",        color:"#c98bff",
-      bio:"Keeps the heartbeat. Replace with their bio.",
-      facts:{ "Influences":"Add 2–3 artists", "Fave song to play":"Add one", "Gear":"Kit + cymbals", "Fun fact":"Add something weird" },
-      socials:[{name:"Instagram",url:"https://instagram.com/"}] },
+    { id:"vox",   name:"Naya",  role:"Vocals", color:"#ff7fd6", photo:"", photos:[],
+      bio:"The voice of NYTEGAZE. Full bio coming soon.", facts:{}, socials:[] },
+    { id:"gtr1",  name:"Dana",  role:"Guitar", color:"#7cc4ff", photo:"", photos:[],
+      bio:"One half of the NYTEGAZE guitar attack. Full bio coming soon.", facts:{}, socials:[] },
+    { id:"gtr2",  name:"Augie", role:"Guitar", color:"#a58cff", photo:"", photos:[],
+      bio:"The other half of the NYTEGAZE guitar attack. Full bio coming soon.", facts:{}, socials:[] },
+    { id:"bass",  name:"Josh",  role:"Bass",   color:"#5d78ff", photo:"", photos:[],
+      bio:"Holds down the low end. Full bio coming soon.", facts:{}, socials:[] },
+    { id:"drums", name:"???",   role:"Drums",  color:"#c98bff", photo:"", photos:[],
+      bio:"Our drummer is a mystery… for now. Stay tuned.", facts:{}, socials:[] },
   ],
   /* SHOWS
      date: YYYY-MM-DD, time: 24h. Upcoming vs past is worked out automatically from the date.
@@ -943,18 +937,19 @@ function renderMember(id){
       <h1 class="big" style="margin:0">${esc(m.name)}</h1>
       <div style="color:${m.color};letter-spacing:.2em;text-transform:uppercase;font-size:13px;margin-top:4px">${esc(m.role)}</div>
       <p class="muted" style="margin-top:14px;text-align:left">${esc(m.bio)}</p>
-      <div class="facts">${Object.entries(m.facts).map(([k,v])=>`<div><small>${esc(k)}</small>${esc(v)}</div>`).join("")}</div>
+      ${Object.keys(m.facts||{}).length?`<div class="facts">${Object.entries(m.facts).map(([k,v])=>`<div><small>${esc(k)}</small>${esc(v)}</div>`).join("")}</div>`:""}
     </div>
     <button class="btn full" id="soundOff" style="background:linear-gradient(90deg,${m.color},var(--violet));margin-bottom:12px">♪ Hear their sound</button>
-    <h2>Follow ${esc(m.name.split(" ")[0])}</h2>
-    <div class="socials">${socialTiles(m.socials)}</div>
+    ${(m.photos||[]).length?`<h2>Photos</h2><div class="media-grid" id="mediaGrid">${m.photos.map(parseMedia).map(tileHTML).join("")}</div>`:""}
+    ${(m.socials||[]).length?`<h2>Follow ${esc(m.name)}</h2><div class="socials">${socialTiles(m.socials)}</div>`:""}
     <div class="row" style="margin-top:16px">
-      <button class="btn ghost" style="flex:1" data-go="member-${prev.id}">← ${esc(prev.role)}</button>
-      <button class="btn ghost" style="flex:1" data-go="member-${next.id}">${esc(next.role)} →</button>
+      <button class="btn ghost" style="flex:1" data-go="member-${prev.id}">← ${esc(prev.name)}</button>
+      <button class="btn ghost" style="flex:1" data-go="member-${next.id}">${esc(next.name)} →</button>
     </div>`;
   $("#v-member").querySelector(".avatar").classList.add("x");
   const big=$("#v-member .avatar"); big.style.width=big.style.height="120px"; big.style.fontSize="64px"; big.style.margin="0 auto 14px";
-  $("#soundOff").onclick=()=>instrumentSound(m.role);
+  showMedia=(m.photos||[]).map(parseMedia);
+  $("#soundOff").onclick=()=>instrumentSound(m.id==="gtr1"?"Lead Guitar":m.role);
 }
 // each member's page plays a little instrument sample made in Web Audio
 function instrumentSound(role){
@@ -1086,7 +1081,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-11";
+const APP_BUILD="2026.11.15-12";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
