@@ -44,7 +44,7 @@ header{padding:calc(14px + var(--safe-t)) 18px 10px;display:flex;align-items:cen
 @keyframes flick{0%,92%,100%{opacity:1}93%{opacity:.55}94%{opacity:1}96%{opacity:.7}}
 .iconbtn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(10px)}
 .iconbtn svg{width:20px;height:20px}
-main{flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 16px 120px;scroll-behavior:smooth}
+main{flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 16px 190px;scroll-behavior:smooth}
 main::-webkit-scrollbar{display:none}
 .view{display:none;animation:rise .45s cubic-bezier(.2,.8,.2,1)}
 .view.on{display:block}
@@ -187,6 +187,7 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
 .minicount div{flex:1;text-align:center;padding:8px 2px;border-radius:12px;background:rgba(0,0,0,.35);border:1px solid var(--line)}
 .minicount b{display:block;font-family:"JetBrains Mono",monospace;font-size:20px;text-shadow:0 0 10px #6a7bff}
 .minicount span{font-size:9px;letter-spacing:.2em;color:var(--dim)}
+.hero-flyer[hidden]{display:none}
 .hero-flyer{width:46%;max-width:180px;margin:0 auto 12px;display:block;border-radius:12px;cursor:zoom-in;box-shadow:0 0 30px -6px #6a7bff}
 .past-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .past{position:relative;border-radius:16px;overflow:hidden;cursor:pointer;background:var(--panel);border:1px solid var(--line);aspect-ratio:4/5}
@@ -215,7 +216,7 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
 #lb .nav2{display:flex;justify-content:space-between;align-items:center;padding:8px 16px calc(14px + var(--safe-b))}
 #lb .cap{font-size:13px;color:var(--dim);text-align:center;flex:1;padding:0 8px}
 /* install banner */
-#install{position:fixed;left:50%;transform:translate(-50%,160%);bottom:calc(92px + var(--safe-b));width:calc(100% - 28px);max-width:452px;z-index:15;display:flex;gap:12px;align-items:center;padding:12px 12px 12px 14px;border-radius:20px;background:rgba(10,12,48,.95);border:1px solid #6a7bff;box-shadow:0 0 30px -6px #5c6bff;backdrop-filter:blur(16px);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+#install{position:fixed;left:50%;transform:translate(-50%,calc(-100% - 40px));top:calc(10px + var(--safe-t));width:calc(100% - 28px);max-width:452px;z-index:15;display:flex;gap:12px;align-items:center;padding:12px 12px 12px 14px;border-radius:20px;background:rgba(10,12,48,.95);border:1px solid #6a7bff;box-shadow:0 0 30px -6px #5c6bff;backdrop-filter:blur(16px);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 #install.show{transform:translate(-50%,0)}
 #install img{width:46px;height:46px;border-radius:12px;flex:none}
 #install .t{flex:1;font-size:13px;line-height:1.35}#install .t b{display:block;font-size:15px}
@@ -841,8 +842,12 @@ function nextTrack(){ pausedAt=0; play(cur+1); }
 function prevTrack(){ pausedAt=0; play(cur-1); }
 audio.onended=nextTrack;
 const PLAY='<svg viewBox="0 0 24 24" fill="#fff"><path d="M7 4v16l13-8z"/></svg>', PAUSE='<svg viewBox="0 0 24 24" fill="#fff"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+function updateMediaSession(t){ try{ if(!("mediaSession" in navigator)) return;
+  navigator.mediaSession.metadata=new MediaMetadata({title:t.title,artist:"NYTEGAZE",album:t.sub||"",artwork:[{src:"img/icon-512.png",sizes:"512x512",type:"image/png"}]});
+  navigator.mediaSession.setActionHandler("play",()=>toggle()); navigator.mediaSession.setActionHandler("pause",()=>toggle());
+  navigator.mediaSession.setActionHandler("nexttrack",()=>nextTrack()); navigator.mediaSession.setActionHandler("previoustrack",()=>prevTrack()); }catch(e){} }
 function updatePlayer(){
-  const t=allTracks()[cur];
+  const t=allTracks()[cur]; updateMediaSession(t);
   $("#npTitle").textContent=t.title; $("#npSub").textContent=t.sub; $("#npType").textContent=t.type==="cover"?"Cover":t.type==="upload"?"Your file":"Original";
   $("#npArt").style.cssText=artCss(cur); $("#npArt").classList.toggle("spin",playing);
   $("#playBtn").innerHTML=playing?PAUSE:PLAY; $("#miniPlay").innerHTML=playing?PAUSE:PLAY;
@@ -1043,7 +1048,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-4";
+const APP_BUILD="2026.11.15-5";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
