@@ -313,7 +313,7 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
           <button class="btn full">Post to the wall</button>
         </form>
         <div id="wall" style="margin-top:12px"></div>
-        <div class="preview-note">Preview: posts are saved on this phone only until the app has a server.</div>
+        <div class="muted" style="font-size:12px;margin-top:8px">Posts are public. Be cool ✦ The band can remove anything.</div>
       </div>
       <div class="muted" style="text-align:center;margin:18px 0 0;font-size:12px">✦ psst… tap the stars in the sky ✦</div>
     </section>
@@ -459,14 +459,14 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
 const BAND = {
   name: "NYTEGAZE",
   bio: "NYTEGAZE is a five-piece band chasing the glow between midnight and morning. Big guitars, bigger choruses, and a sky full of neon.",
-  bookingEmail: "booking@nytegaze.com",
+  bookingEmail: "nytegaze.ca@gmail.com",
   socials: [
     { name:"Instagram", url:"https://www.instagram.com/nytegaze_official/" },
     { name:"TikTok",    url:"https://tiktok.com/" },
     { name:"Facebook",  url:"https://facebook.com/" },
     { name:"Spotify",   url:"https://open.spotify.com/" },
     { name:"YouTube",   url:"https://youtube.com/" },
-    { name:"Email",     url:"mailto:booking@nytegaze.com" },
+    { name:"Email",     url:"mailto:nytegaze.ca@gmail.com" },
   ],
   /* MEMBERS
      photo:  their profile picture (put it in img/members/). Leave "" to show their initial.
@@ -762,10 +762,25 @@ function renderCountdown(){
 function socialTiles(list){ return list.map(s=>`<a class="soc tap" href="${esc(s.url)}" target="_blank" rel="noopener">${ICONS[s.name]||ICONS.Email}${esc(s.name)}</a>`).join(""); }
 $("#bandSocials").innerHTML=socialTiles(BAND.socials);
 
-let wall=store.get("wall",[{n:"Night Crew",m:"First! Can't wait for the next show ✦"}]);
-function renderWall(){ $("#wall").innerHTML=wall.slice(0,8).map(w=>`<div class="note"><b>${esc(w.n)}</b><p>${esc(w.m)}</p></div>`).join(""); }
-$("#wallForm").onsubmit=e=>{ e.preventDefault(); const m=$("#wallMsg").value.trim(); if(!m) return;
-  wall.unshift({n:$("#wallName").value.trim()||"Anonymous",m}); store.set("wall",wall); $("#wallMsg").value=""; renderWall(); SFX.win(); confetti(20); completeTask("wall"); };
+/* Fan wall: shared between every phone and computer, stored in Supabase (table public.fan_wall).
+   The publishable key is meant to be public; the table's security rules only allow reading visible posts and adding new ones. */
+const WALL_API="https://esvvokfsfawespsetiea.supabase.co/rest/v1/fan_wall";
+const WALL_KEY="sb_publishable_VCwK0mSUrG74lo6j-VseGw_2R17j2id";
+const wallHdr={apikey:WALL_KEY,"Content-Type":"application/json"};
+let wall=store.get("wallCache",[]);
+function ago(t){ const s=(Date.now()-new Date(t))/1000; if(s<60) return "just now"; if(s<3600) return Math.floor(s/60)+"m ago"; if(s<86400) return Math.floor(s/3600)+"h ago"; const d=Math.floor(s/86400); return d<7?d+"d ago":new Date(t).toLocaleDateString([], {month:"short",day:"numeric"}); }
+function renderWall(){ $("#wall").innerHTML=wall.length?wall.slice(0,20).map(w=>`<div class="note"><b>${esc(w.name)}</b>${w.created_at?` <span class="muted" style="font-size:11px">${ago(w.created_at)}</span>`:""}<p>${esc(w.message)}</p></div>`).join(""):`<p class="muted">Be the first to post ✦</p>`; }
+async function loadWall(){ try{ const r=await fetch(WALL_API+"?select=id,name,message,created_at&order=created_at.desc&limit=30",{headers:wallHdr,cache:"no-store"}); if(!r.ok) throw 0;
+  wall=await r.json(); store.set("wallCache",wall); renderWall(); }catch(e){ renderWall(); } }
+$("#wallForm").onsubmit=async e=>{ e.preventDefault(); const m=$("#wallMsg").value.trim(); if(!m) return;
+  const n=$("#wallName").value.trim()||"Anonymous", btn=e.target.querySelector("button"); btn.disabled=true; btn.textContent="Posting…";
+  try{ const r=await fetch(WALL_API,{method:"POST",headers:{...wallHdr,Prefer:"return=minimal"},body:JSON.stringify({name:n,message:m})});
+    if(!r.ok){ let msg="Couldn't post right now. Try again in a bit."; try{ const j=await r.json(); if(j&&j.message&&!/violates|policy|permission/i.test(j.message)) msg=j.message; }catch(_){} toast(msg); return; }
+    store.set("wallName",n); $("#wallMsg").value=""; wall.unshift({name:n,message:m,created_at:new Date().toISOString()}); renderWall(); SFX.win(); confetti(20); completeTask("wall"); loadWall();
+  }catch(err){ toast("No connection. Your post wasn't sent."); }
+  finally{ btn.disabled=false; btn.textContent="Post to the wall"; } };
+$("#wallName").value=store.get("wallName","");
+loadWall(); setInterval(()=>{ if(!document.hidden) loadWall(); },45000); document.addEventListener("visibilitychange",()=>{ if(!document.hidden) loadWall(); });
 
 /* ================= shows ================= */
 const flyerBg=i=>[
@@ -1151,7 +1166,7 @@ $("#moreList").innerHTML=[
   ["shows",ICO.shows,"Shows","Upcoming flyers"],["band",ICO.band,"The Band","Meet all five of us"],
 ].map(([id,ic,t,s])=>`<div class="card tap member" data-go="${id}" style="cursor:pointer"><div style="width:40px;height:40px;flex:none">${ic}</div><div style="flex:1"><b>${t}</b><div class="muted">${s}</div></div><svg viewBox="0 0 24 24" width="20" fill="none" stroke="#a7a3c9" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></div>`).join("")
   +`<h2>Links</h2><div class="socials">${socialTiles(BAND.socials)}</div>`;
-$("#bookingEmail").textContent=BAND.bookingEmail;
+$("#bookingEmail").innerHTML=`<a href="mailto:${esc(BAND.bookingEmail)}?subject=${encodeURIComponent("Booking NYTEGAZE")}" style="color:inherit">${esc(BAND.bookingEmail)}</a>`;
 $("#mailForm").onsubmit=e=>{ e.preventDefault(); SFX.win(); confetti(30); toast("Welcome to the night crew ✦"); $("#mailIn").value=""; };
 
 /* ================= sheet ================= */
@@ -1217,7 +1232,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-34";
+const APP_BUILD="2026.11.15-35";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
