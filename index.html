@@ -567,9 +567,9 @@ const BAND = {
   merch: [
     // image: a picture of the item (put it in img/merch/). Without one, a simple drawing is shown.
     { name:"NYTEGAZE Logo Tee", price:"$25", kind:"tee",    color:"#7cc4ff", image:"img/merch/nytegaze-logo-tee.jpg", note:"Black tee with the galaxy NYTEGAZE logo. Mockup, final print may vary." },
-    { name:"Night Crew Hoodie", price:"$45", kind:"hoodie", color:"#3df6ff" },
-    { name:"Logo Sticker Pack", price:"$5",  kind:"sticker",color:"#ffd86b" },
-    { name:"Tour Poster",       price:"$15", kind:"poster", color:"#9b6bff" },
+    { name:"NYTEGAZE Logo Hoodie", price:"$45", kind:"hoodie", color:"#3df6ff", image:"img/merch/nytegaze-hoodie.jpg", note:"Heavyweight black pullover hoodie with the galaxy NYTEGAZE logo on the chest. Mockup, final print may vary." },
+    { name:"Logo Sticker Pack", price:"$5",  kind:"sticker",color:"#ffd86b", image:"img/merch/nytegaze-sticker-pack.jpg", sizes:"6 die-cut vinyl stickers", note:"Six stickers: the logo in galaxy, neon pink, ice blue and gold, plus two star designs." },
+    { name:"\"World Tour*\" Cartoon Poster", price:"$15", kind:"poster", color:"#9b6bff", image:"img/merch/nytegaze-tour-poster.jpg", sizes:"18×24 in print", note:"The whole band as cartoons on one poster. *Mostly Fresno." },
   ],
   giveaway: {
     title:"Signed Setlist + Merch Bundle",
@@ -1034,7 +1034,7 @@ function renderMerch(){ $("#merch").innerHTML=BAND.merch.map((m,i)=>`<div class=
 document.addEventListener("click",e=>{ const m=e.target.closest("[data-merch]"); if(!m) return; const i=+m.dataset.merch, it=BAND.merch[i]; SFX.open();
   openSheet(`<div class="merch-img" style="border-radius:18px;background:radial-gradient(circle,${it.color}44,transparent 70%);margin-bottom:14px">${it.image?`<img src="${esc(it.image)}" alt="${esc(it.name)}" style="width:100%;display:block;border-radius:18px;cursor:zoom-in" onclick="openLB([{kind:'photo',src:'${esc(it.image)}',cap:'${esc(it.name)}'}],0)">`:MERCH_SVG[it.kind](it.color)}</div>
   <h1 class="big" style="margin:0">${esc(it.name)}</h1><div class="mono" style="color:${it.color};font-size:20px;margin:4px 0 10px">${esc(it.price)}</div>
-  ${it.note?`<p class="muted" style="margin-bottom:6px">${esc(it.note)}</p>`:""}<p class="muted">Sizes S–XXL · Ships soon. Tap below and we'll let you know the moment it drops.</p>
+  ${it.note?`<p class="muted" style="margin-bottom:6px">${esc(it.note)}</p>`:""}<p class="muted">${it.sizes?esc(it.sizes):"Sizes S–XXL"} · Ships soon. Tap below and we'll let you know the moment it drops.</p>
   <div class="row" style="margin:14px 0">${["S","M","L","XL","XXL"].map(s=>`<button class="btn ghost" style="padding:8px 12px" onclick="this.parentNode.querySelectorAll('button').forEach(b=>b.style.borderColor='');this.style.borderColor='${it.color}';SFX.tap()">${s}</button>`).join("")}</div>
   <button class="btn full" onclick="notifyMerch(${i})">${notifs.includes(i)?"✓ You'll be notified":"Notify me when it drops"}</button>`); });
 function notifyMerch(i){ if(!notifs.includes(i)){ notifs.push(i); store.set("merchN",notifs);} SFX.win(); confetti(25); closeSheet(); renderMerch(); toast("You're on the list ✦"); }
@@ -1134,7 +1134,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-26";
+const APP_BUILD="2026.11.15-27";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
