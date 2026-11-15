@@ -463,7 +463,7 @@ const BAND = {
   // Photographers: any caption or credit that mentions one of these names links to their page.
   photographers: {
     "photography_by_amauri": "https://www.instagram.com/photography_by_amauri/",
-    "shootwithsilence": "https://www.instagram.com/shootwsilence/",
+    "shootwithsilence": "https://www.instagram.com/cxoto/",
   },
   socials: [
     { name:"Instagram", url:"https://www.instagram.com/nytegaze_official/" },
@@ -1349,7 +1349,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-42";
+const APP_BUILD="2026.11.15-43";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
