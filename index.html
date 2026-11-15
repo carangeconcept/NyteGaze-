@@ -464,12 +464,6 @@ const BAND = {
      presenter / address: optional, shown on the show page.
      Drive files and folders must be shared as "Anyone with the link".                     */
   shows: [
-    { date:"2026-12-05", time:"20:00", venue:"The Starlight Room", city:"Your City, CA", tickets:"https://example.com", note:"All ages · Doors 7PM",
-      flyer:"" },
-    { date:"2026-12-19", time:"21:00", venue:"Neon Alley",         city:"Your City, CA", tickets:"https://example.com", note:"21+ · w/ special guests",
-      flyer:"" },
-    { date:"2027-01-16", time:"20:30", venue:"Moonlit Hall",       city:"Next Town, CA", tickets:"https://example.com", note:"New Year kickoff",
-      flyer:"" },
     { date:"2026-11-14", time:"18:00", venue:"Strummer's", city:"Fresno, CA", address:"833 E Fern Ave, Fresno, CA 93728",
       tickets:"https://strummersclub.com", note:"All ages · Nyte Gaze as Fall Out Boy", presenter:"Rad Music",
       lineup:[
@@ -1043,11 +1037,21 @@ if(isIOS && !isStandalone()) showInstall("ios");
 // Android Chrome: if the app is already installed, hide the pop-up even in a normal browser tab.
 if(navigator.getInstalledRelatedApps){ navigator.getInstalledRelatedApps().then(apps=>{ if(apps&&apps.length){ store.set("installed",true); hideInstall(); } }).catch(()=>{}); }
 // Show whether this is the installed app on the More page
-addEventListener("load",()=>{ const el=$("#appStatus"); if(el) el.innerHTML=isStandalone()?"✓ You're using the installed app.":"You're in the browser right now."; });
+addEventListener("load",()=>{ const el=$("#appStatus"); if(el) el.innerHTML=(isStandalone()?"✓ You're using the installed app.":"You're in the browser right now.")+`<br><span style="color:var(--dim)">Version ${APP_BUILD}</span>`; });
 $("#installBtn").onclick=async()=>{ if(!deferredPrompt) return; deferredPrompt.prompt(); const r=await deferredPrompt.userChoice; deferredPrompt=null; hideInstall(); if(r.outcome==="accepted"){ store.set("installed",true); SFX.win(); confetti(60); } };
 $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("installDismissed",Date.now()+3*864e5); };
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
-if("serviceWorker" in navigator && location.protocol==="https:"){ addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
+// Updates: check for a new version on open and whenever the app comes back to the screen,
+// then reload once so fans always run the newest version.
+const APP_BUILD="2026.11.15-4";
+if("serviceWorker" in navigator && location.protocol==="https:"){
+  const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
+  addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(reg=>{
+    reg.update().catch(()=>{});
+    document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") reg.update().catch(()=>{}); });
+  }).catch(()=>{}); });
+}
 
 /* ================= boot ================= */
 renderCountdown(); setInterval(()=>{ renderCountdown(); document.querySelectorAll("[data-count]").forEach(el=>{ const ms=+el.dataset.count-now(); if(ms<=0){ renderShows(); return; } el.innerHTML=countHTML(ms); }); if($("#v-giveaways").classList.contains("on")){ const c=$("#gCount"); if(c){ const ms=Math.max(0,new Date(BAND.giveaway.ends)-now()); c.innerHTML=[[Math.floor(ms/864e5),"DAYS"],[Math.floor(ms/36e5)%24,"HRS"],[Math.floor(ms/6e4)%60,"MIN"],[Math.floor(ms/1e3)%60,"SEC"]].map(([v,l])=>`<div><b>${String(v).padStart(2,"0")}</b><span>${l}</span></div>`).join(""); } } },1000);
