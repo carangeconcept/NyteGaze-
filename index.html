@@ -460,6 +460,8 @@ const BAND = {
        • TikTok              https://www.tiktok.com/@nytegaze/video/NUMBER
        • A file in this repo img/shows/photo1.jpg  or  video/clip.mp4
      driveFolder: link to the show's whole Google Drive folder (shown as "See every photo").
+     lineup: every band on the bill. headliner:true for the top act, us:true for Nyte Gaze.
+     presenter / address: optional, shown on the show page.
      Drive files and folders must be shared as "Anyone with the link".                     */
   shows: [
     { date:"2026-12-05", time:"20:00", venue:"The Starlight Room", city:"Your City, CA", tickets:"https://example.com", note:"All ages · Doors 7PM",
@@ -468,14 +470,16 @@ const BAND = {
       flyer:"" },
     { date:"2027-01-16", time:"20:30", venue:"Moonlit Hall",       city:"Next Town, CA", tickets:"https://example.com", note:"New Year kickoff",
       flyer:"" },
-    { date:"2026-10-31", time:"21:00", venue:"Halloween Bash (sample)", city:"Your City, CA", tickets:"", note:"Thanks for coming!",
-      flyer:"img/flyers/sample-past.jpg",
-      media:[
-        "img/shows/sample/photo-1.jpg",
-        "img/shows/sample/photo-2.jpg",
-        "img/shows/sample/photo-3.jpg",
-        "img/shows/sample/photo-4.jpg",
+    { date:"2026-11-14", time:"18:00", venue:"Strummer's", city:"Fresno, CA", address:"833 E Fern Ave, Fresno, CA 93728",
+      tickets:"https://strummersclub.com", note:"All ages · Nyte Gaze as Fall Out Boy", presenter:"Rad Music",
+      lineup:[
+        { name:"Givem Hell Kid",     desc:"My Chemical Romance tribute", headliner:true },
+        { name:"Godzilla Radio",     desc:"Nu-metal mix" },
+        { name:"Nyte Gaze",          desc:"as Fall Out Boy", us:true },
+        { name:"California License", desc:"as Green Day" },
       ],
+      flyer:"img/flyers/2026-11-14-strummers.jpg",
+      media:[],
       driveFolder:"" },
   ],
   // Add  src:"music/song.mp3"  to play a real file. Tracks without src play a built-in demo loop.
@@ -686,6 +690,7 @@ function renderShows(){
       ${s.flyer?`<img class="flyer-img" src="${esc(s.flyer)}" alt="Flyer: ${esc(s.venue)}" loading="lazy" data-flyer="${i}">`:`<div data-flyer="${i}" style="cursor:zoom-in">${genFlyer(s,i)}</div>`}
       <div class="show-meta"><div><b>${esc(s.venue)}</b><small>${d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"})} · ${d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})} · ${esc(s.city)}</small></div></div>
       ${s.note?`<div class="muted" style="margin:0 4px;font-size:13px">${esc(s.note)}</div>`:""}
+      ${s.lineup&&s.lineup.length?`<div class="muted" style="margin:4px 4px 0;font-size:12px">With ${s.lineup.filter(b=>!b.us).map(b=>esc(b.name)).join(", ")}</div>`:""}
       <div class="minicount" data-count="${d.getTime()}">${countHTML(d-now())}</div>
       <div class="flyer-actions">
         ${s.tickets?`<a class="btn" style="flex:1" href="${esc(s.tickets)}" target="_blank" rel="noopener">Tickets</a>`:""}
@@ -726,6 +731,10 @@ function tileHTML(x,i){
     ${x.group==="video"?(x.thumb?PLAYDOT:`<span class="ico">${ico}</span>`):(x.kind==="link"?`<span class="ico">${ico}</span>`:"")}
     ${x.label?`<span class="kind">${x.label}</span>`:""}</div>`;
 }
+function lineupHTML(s){ if(!s.lineup||!s.lineup.length) return "";
+  return `<h2>The lineup</h2><div class="card" style="padding:6px 14px">${s.lineup.map(b=>`<div class="row" style="padding:10px 0;border-bottom:1px solid var(--line)">
+    <div style="flex:1"><b style="${b.us?"color:#fff;text-shadow:0 0 10px #6a7bff":""}">${b.us?'<span class="gothic" style="font-size:20px">'+esc(b.name)+'</span>':esc(b.name)}</b>
+    ${b.desc?`<div class="muted" style="font-size:13px">${esc(b.desc)}</div>`:""}</div>${b.headliner?'<span class="pill">Headliner</span>':""}${b.us?'<span class="pill" style="border-color:#6a7bff">That\'s us</span>':""}</div>`).join("")}</div>`; }
 let showMedia=[];
 function renderShowPage(id){
   const s=BAND.shows.find(x=>showId(x)===id); if(!s) return false;
@@ -737,7 +746,9 @@ function renderShowPage(id){
       ${s.flyer?`<img class="flyer-img" src="${esc(s.flyer)}" alt="Flyer: ${esc(s.venue)}" id="showFlyer">`:genFlyer(s,0)}
       <div class="show-meta"><div><b>${esc(s.venue)}</b><small>${d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"})} · ${esc(s.city)}</small></div></div>
       ${s.note?`<div class="muted" style="margin:0 4px 4px;font-size:13px">${esc(s.note)}</div>`:""}
+      ${s.presenter||s.address?`<div class="muted" style="margin:0 4px 4px;font-size:12px">${[s.presenter?"Presented by "+esc(s.presenter):"",s.address?esc(s.address):""].filter(Boolean).join(" · ")}</div>`:""}
     </div>
+    ${lineupHTML(s)}
     <h2>From the night</h2>
     ${all.length?`<div class="seg" id="mediaSeg"><button class="on" data-mf="all">All ${all.length}</button>${photos?`<button data-mf="photo">Photos ${photos}</button>`:""}${vids?`<button data-mf="video">Videos ${vids}</button>`:""}</div>
       <div class="media-grid" id="mediaGrid">${all.map(tileHTML).join("")}</div>`

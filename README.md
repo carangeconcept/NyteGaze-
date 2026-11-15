@@ -40,7 +40,7 @@ Shows move from Upcoming to Past on their own once the date passes.
 ## Still to do
 - Giveaway entries, fan wall posts and mailing-list signups are only saved on each fan's phone for now.
   They need a small backend (for example Firebase or Supabase) before a real giveaway runs.
-- Real songs, videos, photos, flyers and member info. The Halloween Bash show and its photos are samples to replace.
+- Real songs, videos, photos, flyers and member info.
 
 ## Files
 - `index.html`: the whole app
