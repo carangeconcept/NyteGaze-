@@ -580,9 +580,11 @@ const BAND = {
   ],
   // Add  src:"music/song.mp3"  to play a real file. Tracks without src play a built-in demo loop.
   tracks: [
+    // latest:true = shown as "Latest drop" on the home screen.
     // bg:true = part of the soft background shuffle after "tap to enter" (a random bg song plays, then another, never the same twice in a row).
     { title:"Night Menu", type:"original", sub:"App theme · 8-bit", src:"music/night-menu.mp3", bg:true },
     { title:"Beat It", type:"cover", sub:"Cover · Michael Jackson · Instrumental", src:"music/beat-it-cover.mp3", bg:true },
+    { title:"Your Very Own Lullaby", type:"original", sub:"Potential OG song · Demo", src:"music/your-very-own-lullaby.mp3", bg:true, latest:true },
   ],
   pollOptions: ["Cover idea #1","Cover idea #2","Cover idea #3","Cover idea #4"],
   // Add  src:"video/clip.mp4"  for real videos
@@ -975,7 +977,7 @@ function renderTracks(){
     <span class="n">${i===cur&&playing?"♪":String(i+1).padStart(2,"0")}</span><div class="art" style="width:44px;height:44px;border-radius:10px;${artCss(i)}"></div>
     <div class="t"><b>${esc(t.title)}</b><small>${esc(t.sub)}</small></div></div>`;}).join("");
 }
-const latestIdx=()=>{ const t=BAND.tracks.find(x=>!x.bg)||BAND.tracks[0]; return allTracks().indexOf(t); };
+const latestIdx=()=>{ const t=BAND.tracks.find(x=>x.latest)||BAND.tracks.find(x=>!x.bg)||BAND.tracks[0]; return allTracks().indexOf(t); };
 function renderHomeTrack(){ const i=latestIdx(), t=allTracks()[i], on=playing&&cur===i;
   $("#homeTrack").innerHTML=`<div class="np"><div class="art ${on?"spin":""}" style="width:64px;height:64px;${artCss(i)}"></div><div style="flex:1"><b style="font-size:18px">${esc(t.title)}</b><div class="muted">${esc(t.sub)}</div></div><div class="play" style="width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#3346ff,#7b5cff 60%,#ff6fd8)">${on?PAUSE:PLAY}</div></div>`; }
 $("#homeTrack").onclick=()=>{ const i=latestIdx(); if(playing&&cur===i) pause(); else { pausedAt=0; play(i);} };
@@ -1215,7 +1217,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-33";
+const APP_BUILD="2026.11.15-34";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
