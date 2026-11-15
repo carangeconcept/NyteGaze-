@@ -474,8 +474,31 @@ const BAND = {
         { name:"California License", desc:"as Green Day" },
       ],
       flyer:"img/flyers/2026-11-14-strummers.jpg",
-      media:[],
-      driveFolder:"" },
+      media:[
+        // videos
+        "https://drive.google.com/file/d/1rbiD4keXHDC5mH55sfZgoT5ZI7BGE3-b/view#video",
+        "https://drive.google.com/file/d/14wgxklLbp0K7p_JDhb5aj3I3yAsTpie4/view#video",
+        "https://drive.google.com/file/d/1zOoZXeXB6dY3Cu3qieh1RRyFhV727QNv/view#video",
+        "https://drive.google.com/file/d/1QzugwSfFTtjeZCMgbwDbJNqPMVIIQbnG/view#video",
+        // photos
+        "https://drive.google.com/file/d/1BhnXR877wKk9Lk5pSAR1u8Q36zQsY988/view",
+        "https://drive.google.com/file/d/1w8eY2462_9PQjmu9BQ0oNC3VOud64qg4/view",
+        "https://drive.google.com/file/d/1iZtHwbim5N0cRwDU9jtyyh94Cv15a9Xm/view",
+        "https://drive.google.com/file/d/1nBwQNRpllgI2JHWDG6y8pmBxG4qnJiYV/view",
+        "https://drive.google.com/file/d/1NnrkGmdUkEgzV6NZ0WZ_globffHT2GQm/view",
+        "https://drive.google.com/file/d/1H-aQCrwrNbJ3PN5J9WpYoCr2eQXutIU9/view",
+        "https://drive.google.com/file/d/1dkhZrJSCOvvgOIrxTxNf0Pv-vEaThiXg/view",
+        "https://drive.google.com/file/d/1dK23kE2byPODBjynPsITpctby-lCZLyI/view",
+        "https://drive.google.com/file/d/1fJwf-XFlASezQ0MT3pyic8Nr6ZLX6GBL/view",
+        "https://drive.google.com/file/d/1QCsyAJeuVp-Q9FdInzyTz_59tgfPfGjd/view",
+        "https://drive.google.com/file/d/1XMoY9y8zWtt6SRmFuQFGWEdxb-SO8qLO/view",
+        "https://drive.google.com/file/d/14fIfxX1DUXW14h4jxfC2_fKAWT8tZ2nW/view",
+        "https://drive.google.com/file/d/10EeMWjIhzREAxEjxsckQbgvp1ZrCZSIM/view",
+        "https://drive.google.com/file/d/1l_8F5Jgis9XSad-4_emdTMytUmUY1q2o/view",
+        "https://drive.google.com/file/d/1uH0_0vP2jxdG3rRT2JgEiSvFMxd5xCR7/view",
+        "https://drive.google.com/file/d/1bC8TlCt9v0gJhSyl2egmqoGArThIHpsV/view",
+      ],
+      driveFolder:"https://drive.google.com/drive/folders/1LTkVP8EHfVUDXUSEA5PAG_S8UAm0dm0P" },
   ],
   // Add  src:"music/song.mp3"  to play a real file. Tracks without src play a built-in demo loop.
   tracks: [
@@ -1048,7 +1071,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-5";
+const APP_BUILD="2026.11.15-6";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
