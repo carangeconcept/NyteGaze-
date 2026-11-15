@@ -735,7 +735,7 @@ function parseMedia(raw){
     return {kind:"tiktok",group:"video",url:u,embed:`https://www.tiktok.com/embed/v2/${m[1]}`,ratio:"9/16",label:"TikTok",cap:o.caption};
   if((m=u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:.*&)?id=)([\w-]{20,})/))){
     const id=m[1], thumb=`https://drive.google.com/thumbnail?id=${id}&sz=w600`;
-    return wantVideo ? {kind:"drivevideo",group:"video",url:u,thumb,embed:`https://drive.google.com/file/d/${id}/preview`,ratio:"16/9",label:"Video",cap:o.caption}
+    return wantVideo ? {kind:"drivevideo",group:"video",url:u,thumb,embed:`https://drive.google.com/file/d/${id}/preview`,ratio:"16/9",label:"Video",open:"Google Drive",cap:o.caption}
                      : {kind:"photo",group:"photo",url:u,thumb,src:`https://drive.google.com/thumbnail?id=${id}&sz=w2000`,cap:o.caption}; }
   if(/\.(jpe?g|png|webp|gif|avif)(\?.*)?$/i.test(u)) return {kind:"photo",group:"photo",url:u,thumb:u,src:u,cap:o.caption};
   if(/\.(mp4|mov|webm|m4v)(\?.*)?$/i.test(u)) return {kind:"file",group:"video",url:u,src:u,label:"Video",cap:o.caption};
@@ -792,7 +792,7 @@ function drawLB(){
   else if(x.kind==="file") st.innerHTML=`<video src="${esc(x.src)}" controls autoplay playsinline></video>`;
   else st.innerHTML=`<iframe src="${esc(x.embed)}" style="aspect-ratio:${x.ratio};max-height:100%" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
   $("#lbCount").textContent=(lbI+1)+" / "+lbItems.length;
-  $("#lbCap").innerHTML=(x.cap?esc(x.cap)+" · ":"")+(x.url&&x.kind!=="photo"?`<a href="${esc(x.url)}" target="_blank" rel="noopener" style="color:var(--cyan)">Open in ${x.label||"app"}</a>`:"");
+  $("#lbCap").innerHTML=(x.cap?esc(x.cap)+" · ":"")+(x.url&&x.kind!=="photo"?`<a href="${esc(x.url.replace(/#video$/,""))}" target="_blank" rel="noopener" style="color:var(--cyan)">Open in ${x.open||x.label||"app"}</a>`:"");
   $("#lbPrev").style.visibility=$("#lbNext").style.visibility=lbItems.length>1?"visible":"hidden";
 }
 $("#lbClose").onclick=closeLB; $("#lbPrev").onclick=()=>{ lbI=(lbI-1+lbItems.length)%lbItems.length; drawLB(); SFX.tap(); }; $("#lbNext").onclick=()=>{ lbI=(lbI+1)%lbItems.length; drawLB(); SFX.tap(); };
@@ -1071,7 +1071,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-7";
+const APP_BUILD="2026.11.15-8";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
