@@ -471,6 +471,7 @@ const BAND = {
      driveFolder: link to the show's whole Google Drive folder (shown as "See every photo").
      lineup: every band on the bill. headliner:true for the top act, us:true for Nyte Gaze.
      presenter / address: optional, shown on the show page.
+     credits: e.g. "Photos by <photographer>", shown above the gallery. A single item can carry its own caption: { url:"...", caption:"📷 name" }.
      Drive files and folders must be shared as "Anyone with the link".                     */
   shows: [
     { date:"2026-11-14", time:"18:00", venue:"Strummer's", city:"Fresno, CA", address:"833 E Fern Ave, Fresno, CA 93728",
@@ -487,7 +488,51 @@ const BAND = {
         "https://drive.google.com/file/d/14wgxklLbp0K7p_JDhb5aj3I3yAsTpie4/view#video",
         "https://drive.google.com/file/d/1zOoZXeXB6dY3Cu3qieh1RRyFhV727QNv/view#video",
         "https://drive.google.com/file/d/1QzugwSfFTtjeZCMgbwDbJNqPMVIIQbnG/view#video",
+        // photos by shootwithsilence
+        { url:"https://drive.google.com/file/d/19DqWjaO_jAhN9wHDG1Bfx-WcjkVNf9O9/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1qlSr-LghEqllmFt5WI5ZFHzvoq5gQO68/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1B0qfzxXIqY0bO3ic5SlSi6RKsyaV6zug/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1AGEZIIp3eEOmClZNdFjb8X4mQvdZZiHE/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1CdcVLLXffwqZpVGOngs6sxZuey4OeJM7/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1O-t7tT3egQeudhDOgi99GCvAcKEk-PaX/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1yfGHMGgfA7f2_uFlbssrTzJQS7bfG2S9/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1mk6TWHHA2cZCEhg817o0SA6qnoxI2Uel/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1KQsWc1_HlYQtZ0LXmjhRtz6Sg0iEpFwj/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1hOxpFDvQmGFuMfzgwY92nbDcNO1GTUph/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1mIamPNfzP6v0HyI-YOGSmsUZodjJUUlu/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1LnF06vhM7ujvsF9wV7cMJE76zvt-EYpW/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/12Hjc22bilbZBR81A227k2jI7rA0-3KQJ/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1A07XA1vKUb7FnLi2Mj6167VVrZyhmud7/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1lGUg5NX3rCickG5vwd0s88hW70sEpnQ1/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1mBz0aBJVo-rVYmAgr7lTgzMpns_aF69D/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1IKdEFdynqVnA6_Rgo7Wbf61He7P-NWaF/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/13rlu-wYod1-o75v-YgrZa5KjvwrmOZC1/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1kzxmnCizHDYSZED09m5uokz5j-y9i2bL/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1SJ1OiCSkV0Q3PRbUT1xi1W0LgT5opz5t/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1P2IK9LwaM0Wt7zMulw5J5XmB87bQxsdg/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1rokZ8UxBdbZqe9dGVXe8DTgQ445_9A6F/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1NkkQZNgyg8fvtMJ-zvdHY0ucBg_Ep8nX/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1Y_yoyWYSa9QVP5M-yI_mR8dDwQPPEH_d/view", caption:"📷 shootwithsilence" },
+        { url:"https://drive.google.com/file/d/1qhqMaHBPPOdYmqPVGLXQUxr0NTwp5hte/view", caption:"📷 shootwithsilence" },
+        // band photos
+        "https://drive.google.com/file/d/1BhnXR877wKk9Lk5pSAR1u8Q36zQsY988/view",
+        "https://drive.google.com/file/d/1w8eY2462_9PQjmu9BQ0oNC3VOud64qg4/view",
+        "https://drive.google.com/file/d/1iZtHwbim5N0cRwDU9jtyyh94Cv15a9Xm/view",
+        "https://drive.google.com/file/d/1nBwQNRpllgI2JHWDG6y8pmBxG4qnJiYV/view",
+        "https://drive.google.com/file/d/1NnrkGmdUkEgzV6NZ0WZ_globffHT2GQm/view",
+        "https://drive.google.com/file/d/1H-aQCrwrNbJ3PN5J9WpYoCr2eQXutIU9/view",
+        "https://drive.google.com/file/d/1dkhZrJSCOvvgOIrxTxNf0Pv-vEaThiXg/view",
+        "https://drive.google.com/file/d/1dK23kE2byPODBjynPsITpctby-lCZLyI/view",
+        "https://drive.google.com/file/d/1fJwf-XFlASezQ0MT3pyic8Nr6ZLX6GBL/view",
+        "https://drive.google.com/file/d/1QCsyAJeuVp-Q9FdInzyTz_59tgfPfGjd/view",
+        "https://drive.google.com/file/d/1XMoY9y8zWtt6SRmFuQFGWEdxb-SO8qLO/view",
+        "https://drive.google.com/file/d/14fIfxX1DUXW14h4jxfC2_fKAWT8tZ2nW/view",
+        "https://drive.google.com/file/d/10EeMWjIhzREAxEjxsckQbgvp1ZrCZSIM/view",
+        "https://drive.google.com/file/d/1l_8F5Jgis9XSad-4_emdTMytUmUY1q2o/view",
+        "https://drive.google.com/file/d/1uH0_0vP2jxdG3rRT2JgEiSvFMxd5xCR7/view",
+        "https://drive.google.com/file/d/1bC8TlCt9v0gJhSyl2egmqoGArThIHpsV/view",
       ],
+      credits:"Photos by shootwithsilence",
       driveFolder:"" },
   ],
   // Add  src:"music/song.mp3"  to play a real file. Tracks without src play a built-in demo loop.
@@ -758,6 +803,7 @@ function renderShowPage(id){
     </div>
     ${lineupHTML(s)}
     <h2>From the night</h2>
+    ${s.credits?`<p class="muted" style="margin:-4px 4px 10px;font-size:13px">📷 ${esc(s.credits)}</p>`:""}
     ${all.length?`<div class="seg" id="mediaSeg"><button class="on" data-mf="all">All ${all.length}</button>${photos?`<button data-mf="photo">Photos ${photos}</button>`:""}${vids?`<button data-mf="video">Videos ${vids}</button>`:""}</div>
       <div class="media-grid" id="mediaGrid">${all.map(tileHTML).join("")}</div>`
      :`<div class="card"><p class="muted">Photos and videos from this show are coming soon ✦</p></div>`}
@@ -1063,7 +1109,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-14";
+const APP_BUILD="2026.11.15-15";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
