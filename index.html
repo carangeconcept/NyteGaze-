@@ -475,6 +475,7 @@ const BAND = {
      driveFolder: link to the show's whole Google Drive folder (shown as "See every photo").
      lineup: every band on the bill. headliner:true for the top act, us:true for Nyte Gaze.
      presenter / address: optional, shown on the show page.
+     guests: fill-ins or special guests for that night: { name, role, photo, full, caption }.
      credits: e.g. "Photos by <photographer>", shown above the gallery. A single item can carry its own caption: { url:"...", caption:"📷 name" }.
      Drive files and folders must be shared as "Anyone with the link".                     */
   shows: [
@@ -537,6 +538,7 @@ const BAND = {
         "https://drive.google.com/file/d/1bC8TlCt9v0gJhSyl2egmqoGArThIHpsV/view",
       ],
       credits:"Photos by shootwithsilence",
+      guests:[ { name:"Jarod", role:"Fill-in drums", photo:"img/members/jarod-profile.jpg", full:"img/members/jarod-1.jpg", caption:"📷 shootwithsilence" } ],
       driveFolder:"" },
   ],
   // Add  src:"music/song.mp3"  to play a real file. Tracks without src play a built-in demo loop.
@@ -803,6 +805,9 @@ function renderShowPage(id){
       ${s.presenter||s.address?`<div class="muted" style="margin:0 4px 4px;font-size:12px">${[s.presenter?"Presented by "+esc(s.presenter):"",s.address?esc(s.address):""].filter(Boolean).join(" · ")}</div>`:""}
     </div>
     ${lineupHTML(s)}
+    ${(s.guests||[]).length?`<h2>Also on stage</h2>${s.guests.map((g,gi)=>`<div class="card member tap" data-guest="${gi}" style="cursor:pointer">
+      <div class="avatar" style="background:#070926">${g.photo?`<img src="${esc(g.photo)}" alt="" style="position:relative;z-index:1;width:100%;height:100%;border-radius:50%;object-fit:cover">`:`<span class="gothic">${esc(g.name[0])}</span>`}</div>
+      <div style="flex:1"><b style="font-size:18px">${esc(g.name)}</b><div style="color:var(--cyan);font-size:13px;letter-spacing:.12em;text-transform:uppercase">${esc(g.role||"Guest")}</div></div></div>`).join("")}`:""}
     <h2>From the night</h2>
     ${s.credits?`<p class="muted" style="margin:-4px 4px 10px;font-size:13px">📷 ${esc(s.credits)}</p>`:""}
     ${all.length?`<div class="seg" id="mediaSeg"><button class="on" data-mf="all">All ${all.length}</button>${photos?`<button data-mf="photo">Photos ${photos}</button>`:""}${vids?`<button data-mf="video">Videos ${vids}</button>`:""}</div>
@@ -811,6 +816,7 @@ function renderShowPage(id){
     ${fid?`<h2>Every photo</h2><div class="card" style="padding:10px"><iframe class="drive-embed" src="https://drive.google.com/embeddedfolderview?id=${fid}#grid" title="Google Drive photos" loading="lazy"></iframe>
       <a class="btn full" style="margin-top:10px" href="${esc(s.driveFolder)}" target="_blank" rel="noopener">Open the full folder in Google Drive</a></div>`:""}`;
   const f=$("#showFlyer"); if(f) f.onclick=()=>openLB([{kind:"photo",src:s.flyer,cap:s.venue}],0);
+  document.querySelectorAll("#v-show [data-guest]").forEach(el=>el.onclick=()=>{ const g=s.guests[+el.dataset.guest]; if(g.full||g.photo) openLB([{kind:"photo",src:g.full||g.photo,cap:[g.name+" · "+(g.role||"Guest"),g.caption].filter(Boolean).join(" · ")}],0); });
   return true;
 }
 document.addEventListener("click",e=>{
@@ -1111,7 +1117,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-19";
+const APP_BUILD="2026.11.15-20";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
