@@ -229,6 +229,23 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
   #lb .stage iframe{height:100%!important;min-height:0!important;width:100%;max-width:none!important;aspect-ratio:auto!important;border-radius:0}
   #lb .stage img,#lb .stage video{max-height:100vh}
 }
+/* weekly update */
+.wu{position:relative;padding:0;overflow:hidden;cursor:pointer;border-color:#6a7bff;box-shadow:0 0 34px -10px #ff3df2}
+.wu .thumb{position:relative;aspect-ratio:16/9;background:radial-gradient(120% 90% at 30% 20%,#3a1f8a,#0b0a2a 60%,#05030f);display:grid;place-items:center;overflow:hidden}
+.wu .thumb img,.wu .thumb video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.wu .thumb:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,3,15,.1) 40%,rgba(5,3,15,.85))}
+.wu .bigplay{position:relative;z-index:2;width:74px;height:74px;border-radius:50%;background:rgba(10,12,48,.55);border:2px solid #fff;display:grid;place-items:center;box-shadow:0 0 30px #ff3df2,inset 0 0 18px #6a7bff;backdrop-filter:blur(6px);animation:pulse 2.4s ease-in-out infinite}
+.wu .bigplay svg{width:30px;height:30px;margin-left:5px}
+.wu .over{position:absolute;left:14px;right:14px;bottom:12px;z-index:2}
+.wu .over b{display:block;font-size:19px;line-height:1.2;text-shadow:0 2px 12px #000}
+.wu .label{position:absolute;top:12px;left:12px;z-index:2;display:flex;gap:6px;align-items:center}
+.wu .label .pill{background:rgba(10,12,48,.7);backdrop-filter:blur(8px);border-color:#6a7bff;color:#fff}
+.wu .new{background:#ff2d6f!important;border-color:#ff2d6f!important;color:#fff!important;box-shadow:0 0 14px #ff2d6f;animation:flick 3s infinite}
+.wu .notes{padding:12px 14px 14px;font-size:14px;color:var(--dim);line-height:1.45}
+.wu-row{display:flex;gap:12px;align-items:center;padding:10px;cursor:pointer}
+.wu-row .wu-mini{position:relative;flex:none;width:118px;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:radial-gradient(120% 90% at 30% 20%,#3a1f8a,#0b0a2a 60%,#05030f);display:grid;place-items:center}
+.wu-row .wu-mini img,.wu-row .wu-mini video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.wu-row .wu-mini svg{position:relative;width:22px;height:22px;filter:drop-shadow(0 0 6px #000)}
 /* install banner */
 #install{position:fixed;left:50%;transform:translate(-50%,calc(-100% - 40px));top:calc(10px + var(--safe-t));width:calc(100% - 28px);max-width:452px;z-index:15;display:flex;gap:12px;align-items:center;padding:12px 12px 12px 14px;border-radius:20px;background:rgba(10,12,48,.95);border:1px solid #6a7bff;box-shadow:0 0 30px -6px #5c6bff;backdrop-filter:blur(16px);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 #install.show{transform:translate(-50%,0)}
@@ -269,6 +286,7 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
     <!-- HOME -->
     <section class="view on" id="v-home">
       <div class="logo-wrap"><img class="hero-logo" id="heroLogo" src="img/logo.webp" alt="NYTEGAZE logo"></div>
+      <div id="homeUpdate"></div>
       <div class="card glow hero">
         <img class="hero-flyer" id="heroFlyer" alt="Next show flyer" hidden>
         <div class="tag">Next show</div>
@@ -358,6 +376,12 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
     <section class="view" id="v-member"></section>
 
     <!-- VIDEO -->
+    <section class="view" id="v-updates">
+      <h1 class="big">Weekly Update</h1>
+      <p class="muted" style="margin:-4px 0 14px">What we're up to this week: show recaps, plans and sneak peeks at new songs.</p>
+      <div id="updatesList"></div>
+    </section>
+
     <section class="view" id="v-video">
       <h1 class="big">Video</h1>
       <div id="videos"></div>
@@ -562,6 +586,11 @@ const BAND = {
   ],
   pollOptions: ["Cover idea #1","Cover idea #2","Cover idea #3","Cover idea #4"],
   // Add  src:"video/clip.mp4"  for real videos
+  // WEEKLY UPDATES: newest first. video can be a Google Drive link (add #video), YouTube, Instagram, TikTok or an .mp4 in videos/.
+  // thumb is optional (a picture shown before play). date is the week it covers.
+  updates: [
+    // { date:"2026-11-16", title:"Strummer's recap + what's next", video:"https://drive.google.com/file/d/FILE_ID/view#video", notes:"Recap of Strummer's, Fulton 55 on Dec 12, and a tiny teaser." },
+  ],
   videos: [
     { title:"Live at The Starlight Room", sub:"Coming soon" },
     { title:"Behind the scenes: rehearsal", sub:"Coming soon" },
@@ -700,14 +729,14 @@ const NAV=[
   {id:"more",label:"More",svg:'<path fill="url(#gx)" stroke="#141a6a" stroke-width=".7" stroke-linejoin="miter" fill-rule="evenodd" d="M5.00 7.40 L5.91 11.09 L9.60 12.00 L5.91 12.91 L5.00 16.60 L4.09 12.91 L0.40 12.00 L4.09 11.09Z M12.00 5.60 L13.27 10.73 L18.40 12.00 L13.27 13.27 L12.00 18.40 L10.73 13.27 L5.60 12.00 L10.73 10.73Z M19.00 7.40 L19.91 11.09 L23.60 12.00 L19.91 12.91 L19.00 16.60 L18.09 12.91 L14.40 12.00 L18.09 11.09Z"/>'},
 ];
 $("#nav").innerHTML=NAV.map(n=>`<button data-go="${n.id}"><svg viewBox="0 0 24 24">${n.svg}</svg>${n.label}</button>`).join("");
-const VALID=["home","shows","music","band","more","video","merch","giveaways"];
+const VALID=["home","shows","music","band","more","video","merch","giveaways","updates"];
 function go(id,silent){
   if(id.startsWith("member-")){ renderMember(id.slice(7)); }
   else if(id.startsWith("show-")){ if(!renderShowPage(id.slice(5))) id="shows"; }
   else if(!VALID.includes(id)) id="home";
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("on"));
   const vid=id.startsWith("member-")?"member":id.startsWith("show-")?"show":id; $("#v-"+vid).classList.add("on");
-  const tab={video:"more",merch:"more",giveaways:"more",member:"band",show:"shows"}[vid]||vid;
+  const tab={updates:"home",video:"more",merch:"more",giveaways:"more",member:"band",show:"shows"}[vid]||vid;
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===tab));
   $("#main").scrollTop=0; if(window.syncHeaderLogo) syncHeaderLogo();
   if(!silent){ SFX.nav(); if(location.hash!=="#"+id) history.replaceState(null,"","#"+id); }
@@ -1022,6 +1051,36 @@ function renderVideos(){ $("#videos").innerHTML=BAND.videos.map((v,i)=>`<div cla
   <b style="display:block;margin:10px 4px 2px">${esc(v.title)}</b></div>`).join(""); }
 $("#videoFile").onchange=e=>{ const f=e.target.files[0]; if(!f) return; BAND.videos.unshift({title:f.name,sub:"Preview",src:URL.createObjectURL(f)}); renderVideos(); SFX.open(); };
 
+
+/* ================= weekly update ================= */
+const updates=()=>(BAND.updates||[]).filter(u=>u&&u.video).slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+const updKey=u=>(u.date||"")+"|"+(u.title||"");
+let updSeen=store.get("updSeen",[]);
+function updMedia(u){ const m=parseMedia(u.video+(/drive\.google\.com/.test(u.video)&&!/#video$/.test(u.video)?"#video":"")); m.cap=u.title; return m; }
+function updThumb(u,m){ const t=u.thumb||m.thumb; if(t) return `<img src="${esc(t)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`;
+  if(m.kind==="file") return `<video src="${esc(m.src)}#t=0.5" preload="metadata" muted playsinline></video>`; return ""; }
+function updDate(u){ if(!u.date) return ""; const d=new Date(u.date+"T12:00:00"); return "Week of "+d.toLocaleDateString([], {month:"short",day:"numeric"}); }
+function playUpdate(i){ const L=updates(); const u=L[i]; if(!u) return; if(!updSeen.includes(updKey(u))){ updSeen.push(updKey(u)); store.set("updSeen",updSeen); }
+  openLB(L.map(updMedia),i); renderUpdates(); }
+function renderUpdates(){
+  const L=updates(), u=L[0];
+  if(!u){ $("#homeUpdate").innerHTML=`<div class="card wu" style="cursor:default"><div class="thumb"><div class="label"><span class="pill">Weekly Update</span></div>
+      <div class="bigplay" style="animation:none;opacity:.6">${PLAY}</div><div class="over"><b>First episode coming soon</b><span class="muted" style="font-size:13px">Show recaps, plans for the week and sneak peeks.</span></div></div></div>`;
+    $("#updatesList").innerHTML=`<div class="card"><p class="muted">No updates yet. The first one drops soon ✦</p></div>`; return; }
+  const m=updMedia(u), isNew=!updSeen.includes(updKey(u));
+  $("#homeUpdate").innerHTML=`<div class="card wu tap" data-upd="0" role="button" aria-label="Play this week's update">
+    <div class="thumb">${updThumb(u,m)}<div class="label"><span class="pill">Weekly Update</span>${isNew?'<span class="pill new">New</span>':""}</div>
+      <div class="bigplay">${PLAY}</div>
+      <div class="over"><span class="muted" style="font-size:12px;letter-spacing:.12em;text-transform:uppercase">${esc(updDate(u))}</span><b>${esc(u.title||"This week with NYTEGAZE")}</b></div></div>
+    ${u.notes?`<div class="notes">${esc(u.notes)}</div>`:""}
+    ${L.length>1?`<div style="padding:0 14px 14px"><button class="btn ghost full" data-go="updates" onclick="event.stopPropagation()">Past updates (${L.length-1})</button></div>`:""}</div>`;
+  $("#updatesList").innerHTML=L.map((x,i)=>{ const mm=updMedia(x); return `<div class="card wu-row tap" data-upd="${i}">
+    <div class="wu-mini">${updThumb(x,mm)}${PLAY}</div>
+    <div style="flex:1;min-width:0"><span class="muted" style="font-size:12px">${esc(updDate(x))}</span>${!updSeen.includes(updKey(x))?' <span class="pill" style="font-size:9px;padding:2px 7px;background:#ff2d6f;border-color:#ff2d6f;color:#fff">New</span>':""}
+      <b style="display:block;margin:2px 0">${esc(x.title||"Weekly update")}</b>${x.notes?`<div class="muted" style="font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(x.notes)}</div>`:""}</div></div>`; }).join("");
+}
+document.addEventListener("click",e=>{ const c=e.target.closest("[data-upd]"); if(c && !e.target.closest("[data-go]")) playUpdate(+c.dataset.upd); });
+
 /* ================= merch ================= */
 const MERCH_SVG={
   tee:c=>`<svg viewBox="0 0 100 100"><path d="M30 15 10 28l8 16 10-5v46h44V39l10 5 8-16-20-13c0 8-9 12-20 12S30 23 30 15z" fill="url(#gx)" stroke="#141a6a" stroke-width="1.5"/><path d="M50 42 53 55 66 58 53 61 50 74 47 61 34 58 47 55z" fill="#fff" opacity=".9"/></svg>`,
@@ -1156,7 +1215,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-32";
+const APP_BUILD="2026.11.15-33";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
@@ -1181,7 +1240,7 @@ setInterval(checkForUpdate,10*60*1000);
 
 /* ================= boot ================= */
 renderCountdown(); setInterval(()=>{ renderCountdown(); document.querySelectorAll("[data-count]").forEach(el=>{ const ms=+el.dataset.count-now(); if(ms<=0){ renderShows(); return; } el.innerHTML=countHTML(ms); }); if($("#v-giveaways").classList.contains("on")){ const c=$("#gCount"); if(c){ const ms=Math.max(0,new Date(BAND.giveaway.ends)-now()); c.innerHTML=[[Math.floor(ms/864e5),"DAYS"],[Math.floor(ms/36e5)%24,"HRS"],[Math.floor(ms/6e4)%60,"MIN"],[Math.floor(ms/1e3)%60,"SEC"]].map(([v,l])=>`<div><b>${String(v).padStart(2,"0")}</b><span>${l}</span></div>`).join(""); } } },1000);
-renderWall(); renderShows(); renderPoll(); renderVideos(); renderMerch(); renderGift(); updatePlayer();
+renderWall(); renderShows(); renderPoll(); renderVideos(); renderUpdates(); renderMerch(); renderGift(); updatePlayer();
 go(location.hash.slice(1)||"home",true); syncHeaderLogo();
 </script>
 </body>

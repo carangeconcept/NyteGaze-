@@ -35,6 +35,7 @@ If you change any image or icon, also change `VERSION` in `sw.js` (for example `
 
 ## Google Drive folders (synced nightly)
 Drop files into the NYTEGAZE folder in Google Drive and the nightly sync adds them to the app:
+- `Weekly Updates`: your weekly video. The file name becomes the title (e.g. `Strummers recap and whats next.mp4`); the Drive file's description becomes the text under it. The newest one shows at the top of the home screen with a NEW badge.
 - `Members/Naya`, `Members/Dana`, `Members/Augie`, `Members/Josh`, `Members/Drummer`: photos of that person.
 - `Shows/YYYY-MM-DD Venue`: photos and videos from that show.
 - `Flyers`: new show flyers. The date, time, venue and lineup are read from the flyer.
