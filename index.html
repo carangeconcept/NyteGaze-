@@ -477,7 +477,28 @@ const BAND = {
       photos:[ { url:"img/members/naya-1.jpg", caption:"📷 shootwithsilence" } ],
       bio:"The voice of NYTEGAZE. Full bio coming soon.", facts:{}, socials:[] },
     { id:"gtr1",  name:"Dana",  role:"Guitar", color:"#7cc4ff", photo:"img/members/dana-profile.jpg",
-      photos:[ { url:"img/members/dana-1.jpg", caption:"📷 shootwithsilence" } ],
+      photos:[
+        { url:"img/members/dana-1.jpg", caption:"📷 shootwithsilence" },
+        "https://drive.google.com/file/d/1udNiP1IIg9r7rABEaP2WO1acN8w4WcUe/view#video",
+        "https://drive.google.com/file/d/1zZ9L5ig2g_1gK59xlpVJzTgQMW8nBiC8/view#video",
+        "https://drive.google.com/file/d/1o07qOIkpXOSuliqlz7TLgc0V55hscBYd/view#video",
+        "https://drive.google.com/file/d/1H4XzbUn8hO4DlkS8UWkty8qSztw1BcUA/view",
+        "https://drive.google.com/file/d/1D3wldDkqMhQ0sBW-4lSWpWDVDgF_qpUa/view",
+        "https://drive.google.com/file/d/1C7-h1-pIU0L6OqtFdzmBs6E7BpECEzhc/view",
+        "https://drive.google.com/file/d/1ro5Gn-UiZ8tbIjhXhIvYCuZva8gFVU29/view",
+        "https://drive.google.com/file/d/13kWdIJMyrpH06Upm6_j3BFDG7GBxLcwF/view",
+        "https://drive.google.com/file/d/1avga_9aVlKldpjMnje-fGrxICG_MrkQt/view",
+        "https://drive.google.com/file/d/1jz0JJhZRidOXGgHTlFYYleadFWikHoyC/view",
+        "https://drive.google.com/file/d/1TIFJNKHzEdMbjNlUefRTUwksyOTR3J1F/view",
+        "https://drive.google.com/file/d/1w8qi713MWlzS25z_0qMG7KJN1AWdABd5/view",
+        "https://drive.google.com/file/d/15DI8rncjH1kcS3Z5HIzDZmTwqhsPhOVj/view",
+        "https://drive.google.com/file/d/1dfUPk2EIYO_RNWDv_U9EVbwZiq1h6r_U/view",
+        "https://drive.google.com/file/d/1WBzYjgNHc_FgIAPQTZ4SIoaakEP7MhEQ/view",
+        "https://drive.google.com/file/d/1Cl5AQS2mPcWWe-QUO1sKV_fBLSYjQ_6D/view",
+        "https://drive.google.com/file/d/1zfQhCltMLIw6kgeJQ7bZcM331eIXDfIg/view",
+        "https://drive.google.com/file/d/1a2sI81juOq_0QDY5df20C5Uy1RAy5HH0/view",
+        "https://drive.google.com/file/d/1H14F3z-XkCVHcqy-17d_fMslgJLQG_PA/view",
+        "https://drive.google.com/file/d/1NdWYxXleAVZyFta2HDJ3E-ymroPll-we/view" ],
       bio:"One half of the NYTEGAZE guitar attack. Full bio coming soon.", facts:{}, socials:[] },
     { id:"gtr2",  name:"Augie", role:"Guitar", color:"#a58cff", photo:"img/members/augie-profile.jpg",
       photos:[ { url:"img/members/augie-1.jpg", caption:"📷 shootwithsilence" } ],
@@ -1283,7 +1304,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-37";
+const APP_BUILD="2026.11.15-38";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
