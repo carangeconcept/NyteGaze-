@@ -745,7 +745,7 @@ function folderId(u){ const m=(u||"").match(/folders\/([\w-]+)/)||(u||"").match(
 const PLAYDOT=`<span class="playdot"><svg viewBox="0 0 24 24" fill="#fff"><path d="M7 4v16l13-8z"/></svg></span>`;
 function tileHTML(x,i){
   const ico={instagram:ICONS.Instagram,tiktok:ICONS.TikTok,link:ICONS.Email}[x.kind]||"";
-  return `<div class="tile tap" data-media="${i}">${x.thumb?`<img src="${esc(x.thumb)}" alt="" loading="lazy" onerror="this.remove()">`:""}
+  return `<div class="tile tap" data-media="${i}">${x.thumb?`<img src="${esc(x.thumb)}" alt="" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`:""}
     ${x.group==="video"?(x.thumb?PLAYDOT:`<span class="ico">${ico}</span>`):(x.kind==="link"?`<span class="ico">${ico}</span>`:"")}
     ${x.label?`<span class="kind">${x.label}</span>`:""}</div>`;
 }
@@ -1071,7 +1071,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-6";
+const APP_BUILD="2026.11.15-7";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
