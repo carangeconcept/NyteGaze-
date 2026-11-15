@@ -21,7 +21,8 @@ All the band info lives in one block near the top of the `<script>` in `index.ht
 | Band bio, booking email | `bio`, `bookingEmail` |
 | Band social links | `socials` |
 | Member names, bios, facts, socials, photo | `members` (add `photo:"img/name.jpg"`) |
-| Shows | `shows` (dates are `YYYY-MM-DD`, add a flyer with `flyer:"img/flyer.jpg"`) |
+| Shows | `shows`: dates are `YYYY-MM-DD`. Put flyers in `img/flyers/` and set `flyer:"img/flyers/name.jpg"` |
+| Past-show photos & videos | `media:[ ...links... ]` on that show. Paste Google Drive, YouTube, Instagram or TikTok links. Add `#video` to the end of a Drive video link. `driveFolder:` adds the whole folder. |
 | Songs | `tracks` (add `src:"music/song.mp3"`) |
 | Videos | `videos` (add `src:"video/clip.mp4"`) |
 | Merch | `merch` |
@@ -32,10 +33,14 @@ Changes go live about a minute after you save. Fans see them the next time they 
 
 If you change any image or icon, also change `VERSION` in `sw.js` (for example `nytegaze-v2`) so phones pick up the new files.
 
+## Showing photos from Google Drive
+Share each file or folder as **Anyone with the link → Viewer**, or it won't appear in the app.
+Shows move from Upcoming to Past on their own once the date passes.
+
 ## Still to do
 - Giveaway entries, fan wall posts and mailing-list signups are only saved on each fan's phone for now.
   They need a small backend (for example Firebase or Supabase) before a real giveaway runs.
-- Real songs, videos, photos, flyers and member info.
+- Real songs, videos, photos, flyers and member info. The Halloween Bash show and its photos are samples to replace.
 
 ## Files
 - `index.html`: the whole app

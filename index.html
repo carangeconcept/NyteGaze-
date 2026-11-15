@@ -179,6 +179,41 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
 #splash .tapto{margin-top:26px;font-size:12px;letter-spacing:.4em;text-transform:uppercase;color:var(--dim);animation:blink 1.6s 1.2s infinite both}
 @keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
 #splash.gone{opacity:0;visibility:hidden}
+/* flyers & show pages */
+.flyer-img{display:block;width:100%;border-radius:16px;cursor:zoom-in;box-shadow:0 10px 40px -12px rgba(60,80,255,.6)}
+.show-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 4px 4px}
+.show-meta b{font-size:18px;display:block}.show-meta small{color:var(--dim)}
+.minicount{display:flex;gap:6px;margin:10px 0 2px}
+.minicount div{flex:1;text-align:center;padding:8px 2px;border-radius:12px;background:rgba(0,0,0,.35);border:1px solid var(--line)}
+.minicount b{display:block;font-family:"JetBrains Mono",monospace;font-size:20px;text-shadow:0 0 10px #6a7bff}
+.minicount span{font-size:9px;letter-spacing:.2em;color:var(--dim)}
+.hero-flyer{width:46%;max-width:180px;margin:0 auto 12px;display:block;border-radius:12px;cursor:zoom-in;box-shadow:0 0 30px -6px #6a7bff}
+.past-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.past{position:relative;border-radius:16px;overflow:hidden;cursor:pointer;background:var(--panel);border:1px solid var(--line);aspect-ratio:4/5}
+.past img.cover,.past .cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.past::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(4,5,26,.95))}
+.past .lbl{position:absolute;left:10px;right:10px;bottom:9px;z-index:2}
+.past .lbl b{display:block;font-size:14px;line-height:1.2}.past .lbl small{color:var(--dim);font-size:11px}
+.past .badge{position:absolute;top:8px;right:8px;z-index:2;font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(4,5,26,.75);border:1px solid var(--line)}
+.past .played{position:absolute;top:8px;left:8px;z-index:2;font-family:'Metal Mania',cursive;font-size:13px;padding:2px 8px;border-radius:6px;background:rgba(66,87,255,.75);transform:rotate(-6deg)}
+.media-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tile{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;cursor:pointer;background:radial-gradient(circle at 30% 30%,#2a2f8a,#0a0c33);border:1px solid var(--line);display:grid;place-items:center}
+.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tile .kind{position:absolute;left:6px;bottom:6px;z-index:2;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:6px;background:rgba(4,5,26,.75)}
+.tile .playdot{position:relative;z-index:2;width:38px;height:38px;border-radius:50%;background:rgba(4,5,26,.6);border:2px solid #fff;display:grid;place-items:center;box-shadow:0 0 16px #6a7bff}
+.tile .playdot svg{width:16px;height:16px;margin-left:2px}
+.tile .ico{position:relative;z-index:2;width:34px;height:34px}
+.drive-embed{width:100%;height:420px;border:0;border-radius:14px;background:#fff}
+/* lightbox */
+#lb{position:fixed;inset:0;z-index:60;background:rgba(2,3,14,.96);display:none;flex-direction:column}
+#lb.show{display:flex}
+#lb .top{display:flex;align-items:center;justify-content:space-between;padding:calc(10px + var(--safe-t)) 12px 8px}
+#lb .stage{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;padding:6px;touch-action:pan-x pan-y pinch-zoom}
+#lb .stage img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
+#lb .stage video{max-width:100%;max-height:100%}
+#lb .stage iframe{width:100%;max-width:480px;border:0;border-radius:12px;background:#000}
+#lb .nav2{display:flex;justify-content:space-between;align-items:center;padding:8px 16px calc(14px + var(--safe-b))}
+#lb .cap{font-size:13px;color:var(--dim);text-align:center;flex:1;padding:0 8px}
 /* install banner */
 #install{position:fixed;left:50%;transform:translate(-50%,160%);bottom:calc(92px + var(--safe-b));width:calc(100% - 28px);max-width:452px;z-index:15;display:flex;gap:12px;align-items:center;padding:12px 12px 12px 14px;border-radius:20px;background:rgba(10,12,48,.95);border:1px solid #6a7bff;box-shadow:0 0 30px -6px #5c6bff;backdrop-filter:blur(16px);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 #install.show{transform:translate(-50%,0)}
@@ -220,6 +255,7 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
     <section class="view on" id="v-home">
       <div class="logo-wrap"><img class="hero-logo" id="heroLogo" src="img/logo.webp" alt="NYTEGAZE logo"></div>
       <div class="card glow hero">
+        <img class="hero-flyer" id="heroFlyer" alt="Next show flyer" hidden>
         <div class="tag">Next show</div>
         <h1 class="big" id="nextVenue">—</h1>
         <div class="muted" id="nextWhen"></div>
@@ -252,11 +288,15 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
     <!-- SHOWS -->
     <section class="view" id="v-shows">
       <h1 class="big">Shows</h1>
-      <p class="muted" style="margin:0 4px 6px">Swipe through upcoming flyers. Tap “Remind me” and we'll keep it at the top.</p>
+      <p class="muted" style="margin:0 4px 6px">Tap a flyer to see it full size.</p>
       <div id="flyers"></div>
       <h2>Past shows</h2>
+      <p class="muted" style="margin:-4px 4px 10px">Tap a flyer for photos and videos from that night.</p>
       <div id="past"></div>
     </section>
+
+    <!-- ONE PAST SHOW -->
+    <section class="view" id="v-show"></section>
 
     <!-- MUSIC -->
     <section class="view" id="v-music">
@@ -345,7 +385,7 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
         <div class="preview-note">Preview: emails aren't sent anywhere yet.</div>
       </div>
       <h2>Get the app</h2>
-      <div class="card"><p class="muted">Save NYTEGAZE to your home screen so it opens like a regular app.</p>
+      <div class="card"><p class="mono" id="appStatus" style="color:var(--cyan);font-size:13px;margin-bottom:8px"></p><p class="muted">Save NYTEGAZE to your home screen so it opens like a regular app.</p>
         <p class="muted" style="margin-top:8px"><b style="color:var(--text)">iPhone:</b> open this page in Safari, tap Share, then <i>Add to Home Screen</i>.</p>
         <p class="muted" style="margin-top:6px"><b style="color:var(--text)">Android:</b> tap the Install pop-up, or the ⋮ menu, then <i>Install app</i>.</p></div>
       <h2>Booking</h2>
@@ -363,6 +403,11 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
 <nav id="nav"></nav>
 <div class="sheet-bg" id="sheetBg"><div class="sheet" id="sheet"></div></div>
 <div id="install" role="dialog" aria-label="Install the app"><img src="img/apple-touch-icon.png" alt=""><div class="t" id="installText"></div><button class="btn" id="installBtn" style="padding:10px 14px;font-size:14px">Install</button><button class="x" id="installX" aria-label="Dismiss">×</button></div>
+<div id="lb" role="dialog" aria-label="Viewer">
+  <div class="top"><span class="pill" id="lbCount"></span><button class="iconbtn" id="lbClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="stage" id="lbStage"></div>
+  <div class="nav2"><button class="iconbtn" id="lbPrev" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="m15 6-6 6 6 6"/></svg></button><div class="cap" id="lbCap"></div><button class="iconbtn" id="lbNext" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="m9 6 6 6-6 6"/></svg></button></div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -404,12 +449,34 @@ const BAND = {
       facts:{ "Influences":"Add 2–3 artists", "Fave song to play":"Add one", "Gear":"Kit + cymbals", "Fun fact":"Add something weird" },
       socials:[{name:"Instagram",url:"https://instagram.com/"}] },
   ],
-  // Dates are YYYY-MM-DD and 24h time. Add a flyer image later with  flyer:"images/flyer1.jpg"
+  /* SHOWS
+     date: YYYY-MM-DD, time: 24h. Upcoming vs past is worked out automatically from the date.
+     flyer: put the image in img/flyers/ and write its path here.
+     media (for past shows): paste links, one per line. The app figures out what each one is:
+       • Google Drive file   https://drive.google.com/file/d/FILE_ID/view   (shows as a photo)
+         For a Drive VIDEO, add #video to the end of the link.
+       • YouTube             https://youtu.be/VIDEO_ID  or  https://www.youtube.com/watch?v=VIDEO_ID
+       • Instagram post/reel https://www.instagram.com/reel/CODE/
+       • TikTok              https://www.tiktok.com/@nytegaze/video/NUMBER
+       • A file in this repo img/shows/photo1.jpg  or  video/clip.mp4
+     driveFolder: link to the show's whole Google Drive folder (shown as "See every photo").
+     Drive files and folders must be shared as "Anyone with the link".                     */
   shows: [
-    { date:"2026-12-05", time:"20:00", venue:"The Starlight Room", city:"Your City, CA", tickets:"https://example.com", note:"All ages · Doors 7PM" },
-    { date:"2026-12-19", time:"21:00", venue:"Neon Alley",         city:"Your City, CA", tickets:"https://example.com", note:"21+ · w/ special guests" },
-    { date:"2027-01-16", time:"20:30", venue:"Moonlit Hall",       city:"Next Town, CA", tickets:"https://example.com", note:"New Year kickoff" },
-    { date:"2026-10-31", time:"21:00", venue:"Halloween Bash",     city:"Your City, CA", tickets:"", note:"Thanks for coming!" },
+    { date:"2026-12-05", time:"20:00", venue:"The Starlight Room", city:"Your City, CA", tickets:"https://example.com", note:"All ages · Doors 7PM",
+      flyer:"" },
+    { date:"2026-12-19", time:"21:00", venue:"Neon Alley",         city:"Your City, CA", tickets:"https://example.com", note:"21+ · w/ special guests",
+      flyer:"" },
+    { date:"2027-01-16", time:"20:30", venue:"Moonlit Hall",       city:"Next Town, CA", tickets:"https://example.com", note:"New Year kickoff",
+      flyer:"" },
+    { date:"2026-10-31", time:"21:00", venue:"Halloween Bash (sample)", city:"Your City, CA", tickets:"", note:"Thanks for coming!",
+      flyer:"img/flyers/sample-past.jpg",
+      media:[
+        "img/shows/sample/photo-1.jpg",
+        "img/shows/sample/photo-2.jpg",
+        "img/shows/sample/photo-3.jpg",
+        "img/shows/sample/photo-4.jpg",
+      ],
+      driveFolder:"" },
   ],
   // Add  src:"music/song.mp3"  to play a real file. Tracks without src play a built-in demo loop.
   tracks: [
@@ -559,10 +626,11 @@ $("#nav").innerHTML=NAV.map(n=>`<button data-go="${n.id}"><svg viewBox="0 0 24 2
 const VALID=["home","shows","music","band","more","video","merch","giveaways"];
 function go(id,silent){
   if(id.startsWith("member-")){ renderMember(id.slice(7)); }
+  else if(id.startsWith("show-")){ if(!renderShowPage(id.slice(5))) id="shows"; }
   else if(!VALID.includes(id)) id="home";
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("on"));
-  const vid=id.startsWith("member-")?"member":id; $("#v-"+vid).classList.add("on");
-  const tab={video:"more",merch:"more",giveaways:"more",member:"band"}[vid]||vid;
+  const vid=id.startsWith("member-")?"member":id.startsWith("show-")?"show":id; $("#v-"+vid).classList.add("on");
+  const tab={video:"more",merch:"more",giveaways:"more",member:"band",show:"shows"}[vid]||vid;
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===tab));
   $("#main").scrollTop=0; if(window.syncHeaderLogo) syncHeaderLogo();
   if(!silent){ SFX.nav(); if(location.hash!=="#"+id) history.replaceState(null,"","#"+id); }
@@ -578,6 +646,7 @@ function renderCountdown(){
   if(!n){ $("#nextVenue").textContent="New dates soon"; $("#nextWhen").textContent="Follow us to hear first."; $("#count").innerHTML=""; return; }
   const d=fmtDate(n.date,n.time);
   $("#nextVenue").textContent=n.venue;
+  const hf=$("#heroFlyer"); if(n.flyer){ if(hf.getAttribute("src")!==n.flyer) hf.src=n.flyer; hf.hidden=false; hf.onclick=()=>openLB([{kind:"photo",src:n.flyer,cap:n.venue}],0); } else hf.hidden=true;
   $("#nextWhen").textContent=d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})+" · "+n.city;
   let ms=Math.max(0,d-now()); const D=Math.floor(ms/864e5),Hh=Math.floor(ms/36e5)%24,M=Math.floor(ms/6e4)%60,S=Math.floor(ms/1e3)%60;
   $("#count").innerHTML=[[D,"DAYS"],[Hh,"HRS"],[M,"MIN"],[S,"SEC"]].map(([v,l])=>`<div><b>${String(v).padStart(2,"0")}</b><span>${l}</span></div>`).join("");
@@ -597,26 +666,107 @@ const flyerBg=i=>[
   "radial-gradient(ellipse at 50% 35%,#c9a6ff77,transparent 40%),radial-gradient(circle at 25% 60%,#3346ffcc,transparent 55%),radial-gradient(circle at 75% 80%,#ff7fd677,transparent 45%),linear-gradient(180deg,#0a0f50,#04051a)",
 ][i%3];
 let reminders=store.get("rem",[]);
+const showId=s=>s.date+"-"+s.venue.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const pastShows=()=>BAND.shows.filter(s=>fmtDate(s.date,s.time)<=now()).sort((a,b)=>fmtDate(b.date,b.time)-fmtDate(a.date,a.time));
+function countHTML(ms){ const D=Math.floor(ms/864e5),Hh=Math.floor(ms/36e5)%24,M=Math.floor(ms/6e4)%60,S=Math.floor(ms/1e3)%60;
+  return [[D,"DAYS"],[Hh,"HRS"],[M,"MIN"],[S,"SEC"]].map(([v,l])=>`<div><b>${String(v).padStart(2,"0")}</b><span>${l}</span></div>`).join(""); }
+function genFlyer(s,i){ const d=fmtDate(s.date,s.time); return `<div class="flyer" style="background:${flyerBg(i)}">
+  <div style="position:absolute;inset:0;background:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 70% 20%,#fff,transparent),radial-gradient(1.5px 1.5px at 40% 60%,#fff,transparent),radial-gradient(1px 1px at 85% 45%,#fff,transparent),radial-gradient(1px 1px at 15% 75%,#fff,transparent),radial-gradient(1.5px 1.5px at 60% 85%,#fff,transparent)"></div>
+  <img src="${LOGO}" alt="" style="position:absolute;top:9%;left:50%;width:58%;transform:translateX(-50%)">
+  <div class="fl-date">${MON[d.getMonth()]} ${d.getDate()}</div><div class="fl-venue">${esc(s.venue)}</div><div class="fl-city">${esc(s.city)}</div></div>`; }
 function renderShows(){
   const up=upcoming();
   $("#flyers").innerHTML = up.length ? up.map((s,i)=>{
     const d=fmtDate(s.date,s.time), key=s.date+s.venue, on=reminders.includes(key);
     return `<div class="card" style="padding:10px">
-      <div class="flyer" style="background:${s.flyer?`url('${esc(s.flyer)}') center/cover`:flyerBg(i)}">
-        <div class="stamp pill" style="background:rgba(0,0,0,.45);z-index:2">${i===0?"Next up":esc(s.note||"")}</div>
-        ${s.flyer?"":`<div style="position:absolute;inset:0;background:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 70% 20%,#fff,transparent),radial-gradient(1.5px 1.5px at 40% 60%,#fff,transparent),radial-gradient(1px 1px at 85% 45%,#fff,transparent),radial-gradient(1px 1px at 15% 75%,#fff,transparent),radial-gradient(1.5px 1.5px at 60% 85%,#fff,transparent)"></div><img src="${LOGO}" alt="" style="position:absolute;top:9%;left:50%;width:58%;transform:translateX(-50%);">`}
-        <div class="fl-date">${MON[d.getMonth()]} ${d.getDate()}</div>
-        <div class="fl-venue">${esc(s.venue)}</div>
-        <div class="fl-city">${esc(s.city)} · ${d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})}</div>
-      </div>
+      ${i===0?`<span class="pill" style="position:absolute;top:18px;left:18px;z-index:3;background:rgba(4,5,26,.75)">Next up</span>`:""}
+      ${s.flyer?`<img class="flyer-img" src="${esc(s.flyer)}" alt="Flyer: ${esc(s.venue)}" loading="lazy" data-flyer="${i}">`:`<div data-flyer="${i}" style="cursor:zoom-in">${genFlyer(s,i)}</div>`}
+      <div class="show-meta"><div><b>${esc(s.venue)}</b><small>${d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"})} · ${d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})} · ${esc(s.city)}</small></div></div>
+      ${s.note?`<div class="muted" style="margin:0 4px;font-size:13px">${esc(s.note)}</div>`:""}
+      <div class="minicount" data-count="${d.getTime()}">${countHTML(d-now())}</div>
       <div class="flyer-actions">
-        ${s.tickets?`<a class="btn" style="flex:1;text-decoration:none" href="${esc(s.tickets)}" target="_blank" rel="noopener">Tickets</a>`:""}
+        ${s.tickets?`<a class="btn" style="flex:1" href="${esc(s.tickets)}" target="_blank" rel="noopener">Tickets</a>`:""}
         <button class="btn ghost" style="flex:1" data-rem="${esc(key)}">${on?"✓ Reminded":"Remind me"}</button>
         <button class="btn ghost" data-copy="${i}" aria-label="Copy show details">Copy</button>
       </div></div>`;}).join("") : `<div class="card"><p class="muted">No shows on the calendar right now. Check back soon ✦</p></div>`;
-  const past=BAND.shows.filter(s=>fmtDate(s.date,s.time)<=now());
-  $("#past").innerHTML = past.length? `<div class="card">${past.map(s=>{const d=fmtDate(s.date);return `<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><span class="mono" style="color:var(--pink);width:64px">${MON[d.getMonth()]} ${d.getDate()}</span><span style="flex:1">${esc(s.venue)}</span><span class="muted">${esc(s.city.split(",")[0])}</span></div>`;}).join("")}</div>` : "";
+  const past=pastShows();
+  $("#past").innerHTML = past.length ? `<div class="past-grid">${past.map((s,i)=>{ const d=fmtDate(s.date), m=(s.media||[]).map(parseMedia);
+      const ph=m.filter(x=>x.group==="photo").length, vd=m.filter(x=>x.group==="video").length;
+      const badge=[ph?ph+" 📷":"",vd?vd+" ▶":""].filter(Boolean).join(" · ");
+      return `<div class="past tap" data-go="show-${showId(s)}">${s.flyer?`<img class="cover" src="${esc(s.flyer)}" alt="" loading="lazy">`:`<div class="cover" style="background:${flyerBg(i)}"><img src="${LOGO}" alt="" style="width:70%;margin:18% auto 0;display:block"></div>`}
+        <span class="played">Played</span>${badge?`<span class="badge">${badge}</span>`:""}
+        <div class="lbl"><b>${esc(s.venue)}</b><small>${MON[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} · ${esc(s.city.split(",")[0])}</small></div></div>`; }).join("")}</div>` : `<div class="card"><p class="muted">Past shows and their photos will show up here.</p></div>`;
 }
+// ---- turn a pasted link into something the app can show ----
+function parseMedia(raw){
+  const o=typeof raw==="string"?{url:raw}:{...raw}; const u=(o.url||o.src||"").trim(); let m;
+  const wantVideo=o.type==="video"||/#video$/i.test(u);
+  if((m=u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|live\/|embed\/))([\w-]{11})/)))
+    return {kind:"youtube",group:"video",url:u,thumb:`https://i.ytimg.com/vi/${m[1]}/hqdefault.jpg`,embed:`https://www.youtube-nocookie.com/embed/${m[1]}?autoplay=1&playsinline=1&rel=0`,ratio:"16/9",label:"YouTube",cap:o.caption};
+  if((m=u.match(/instagram\.com\/(?:[\w.]+\/)?(p|reel|reels|tv)\/([\w-]+)/)))
+    return {kind:"instagram",group:"video",url:u,embed:`https://www.instagram.com/${m[1]==="p"?"p":"reel"}/${m[2]}/embed/`,ratio:"9/15",label:"Instagram",cap:o.caption};
+  if((m=u.match(/tiktok\.com\/@[\w.-]+\/video\/(\d+)/)))
+    return {kind:"tiktok",group:"video",url:u,embed:`https://www.tiktok.com/embed/v2/${m[1]}`,ratio:"9/16",label:"TikTok",cap:o.caption};
+  if((m=u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:.*&)?id=)([\w-]{20,})/))){
+    const id=m[1], thumb=`https://drive.google.com/thumbnail?id=${id}&sz=w600`;
+    return wantVideo ? {kind:"drivevideo",group:"video",url:u,thumb,embed:`https://drive.google.com/file/d/${id}/preview`,ratio:"16/9",label:"Video",cap:o.caption}
+                     : {kind:"photo",group:"photo",url:u,thumb,src:`https://drive.google.com/thumbnail?id=${id}&sz=w2000`,cap:o.caption}; }
+  if(/\.(jpe?g|png|webp|gif|avif)(\?.*)?$/i.test(u)) return {kind:"photo",group:"photo",url:u,thumb:u,src:u,cap:o.caption};
+  if(/\.(mp4|mov|webm|m4v)(\?.*)?$/i.test(u)) return {kind:"file",group:"video",url:u,src:u,label:"Video",cap:o.caption};
+  return {kind:"link",group:"link",url:u,label:"Link",cap:o.caption};
+}
+function folderId(u){ const m=(u||"").match(/folders\/([\w-]+)/)||(u||"").match(/[?&]id=([\w-]+)/); return m?m[1]:""; }
+const PLAYDOT=`<span class="playdot"><svg viewBox="0 0 24 24" fill="#fff"><path d="M7 4v16l13-8z"/></svg></span>`;
+function tileHTML(x,i){
+  const ico={instagram:ICONS.Instagram,tiktok:ICONS.TikTok,link:ICONS.Email}[x.kind]||"";
+  return `<div class="tile tap" data-media="${i}">${x.thumb?`<img src="${esc(x.thumb)}" alt="" loading="lazy" onerror="this.remove()">`:""}
+    ${x.group==="video"?(x.thumb?PLAYDOT:`<span class="ico">${ico}</span>`):(x.kind==="link"?`<span class="ico">${ico}</span>`:"")}
+    ${x.label?`<span class="kind">${x.label}</span>`:""}</div>`;
+}
+let showMedia=[];
+function renderShowPage(id){
+  const s=BAND.shows.find(x=>showId(x)===id); if(!s) return false;
+  const d=fmtDate(s.date,s.time), all=(s.media||[]).map(parseMedia); showMedia=all;
+  const photos=all.filter(x=>x.group==="photo").length, vids=all.filter(x=>x.group==="video").length, fid=folderId(s.driveFolder);
+  $("#v-show").innerHTML=`
+    <button class="btn ghost" data-go="shows" style="margin-bottom:10px">← Shows</button>
+    <div class="card glow" style="padding:10px">
+      ${s.flyer?`<img class="flyer-img" src="${esc(s.flyer)}" alt="Flyer: ${esc(s.venue)}" id="showFlyer">`:genFlyer(s,0)}
+      <div class="show-meta"><div><b>${esc(s.venue)}</b><small>${d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"})} · ${esc(s.city)}</small></div></div>
+      ${s.note?`<div class="muted" style="margin:0 4px 4px;font-size:13px">${esc(s.note)}</div>`:""}
+    </div>
+    <h2>From the night</h2>
+    ${all.length?`<div class="seg" id="mediaSeg"><button class="on" data-mf="all">All ${all.length}</button>${photos?`<button data-mf="photo">Photos ${photos}</button>`:""}${vids?`<button data-mf="video">Videos ${vids}</button>`:""}</div>
+      <div class="media-grid" id="mediaGrid">${all.map(tileHTML).join("")}</div>`
+     :`<div class="card"><p class="muted">Photos and videos from this show are coming soon ✦</p></div>`}
+    ${fid?`<h2>Every photo</h2><div class="card" style="padding:10px"><iframe class="drive-embed" src="https://drive.google.com/embeddedfolderview?id=${fid}#grid" title="Google Drive photos" loading="lazy"></iframe>
+      <a class="btn full" style="margin-top:10px" href="${esc(s.driveFolder)}" target="_blank" rel="noopener">Open the full folder in Google Drive</a></div>`:""}`;
+  const f=$("#showFlyer"); if(f) f.onclick=()=>openLB([{kind:"photo",src:s.flyer,cap:s.venue}],0);
+  return true;
+}
+document.addEventListener("click",e=>{
+  const fl=e.target.closest("[data-flyer]"); if(fl){ const s=upcoming()[+fl.dataset.flyer]; if(s.flyer) openLB([{kind:"photo",src:s.flyer,cap:s.venue}],0); else toast("Flyer coming soon ✦"); return; }
+  const t=e.target.closest("[data-media]"); if(t){ const x=showMedia[+t.dataset.media]; if(x.kind==="link"){ try{window.open(x.url,"_blank");}catch(err){} return; } openLB(showMedia.filter(m=>m.kind!=="link"), showMedia.filter(m=>m.kind!=="link").indexOf(x)); return; }
+  const sg=e.target.closest("[data-mf]"); if(sg){ const f=sg.dataset.mf; $("#mediaSeg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b===sg));
+    document.querySelectorAll("#mediaGrid .tile").forEach(el=>{ const x=showMedia[+el.dataset.media]; el.style.display=(f==="all"||x.group===f)?"":"none"; }); SFX.tap(); }
+});
+// ---- full-screen viewer ----
+let lbItems=[], lbI=0;
+function openLB(items,i){ lbItems=items; lbI=Math.max(0,i); $("#lb").classList.add("show"); drawLB(); SFX.open(); if(playing) pause(); }
+function closeLB(){ $("#lb").classList.remove("show"); $("#lbStage").innerHTML=""; }
+function drawLB(){
+  const x=lbItems[lbI], st=$("#lbStage");
+  if(x.kind==="photo") st.innerHTML=`<img src="${esc(x.src)}" alt="">`;
+  else if(x.kind==="file") st.innerHTML=`<video src="${esc(x.src)}" controls autoplay playsinline></video>`;
+  else st.innerHTML=`<iframe src="${esc(x.embed)}" style="aspect-ratio:${x.ratio};max-height:100%" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+  $("#lbCount").textContent=(lbI+1)+" / "+lbItems.length;
+  $("#lbCap").innerHTML=(x.cap?esc(x.cap)+" · ":"")+(x.url&&x.kind!=="photo"?`<a href="${esc(x.url)}" target="_blank" rel="noopener" style="color:var(--cyan)">Open in ${x.label||"app"}</a>`:"");
+  $("#lbPrev").style.visibility=$("#lbNext").style.visibility=lbItems.length>1?"visible":"hidden";
+}
+$("#lbClose").onclick=closeLB; $("#lbPrev").onclick=()=>{ lbI=(lbI-1+lbItems.length)%lbItems.length; drawLB(); SFX.tap(); }; $("#lbNext").onclick=()=>{ lbI=(lbI+1)%lbItems.length; drawLB(); SFX.tap(); };
+addEventListener("keydown",e=>{ if(!$("#lb").classList.contains("show")) return; if(e.key==="Escape") closeLB(); if(e.key==="ArrowRight") $("#lbNext").click(); if(e.key==="ArrowLeft") $("#lbPrev").click(); });
+(()=>{ let x0=null; const st=$("#lbStage"); st.addEventListener("touchstart",e=>{ x0=e.touches.length===1?e.touches[0].clientX:null; },{passive:true});
+  st.addEventListener("touchend",e=>{ if(x0===null||lbItems[lbI].kind!=="photo") return; const dx=e.changedTouches[0].clientX-x0; if(Math.abs(dx)>60) (dx<0?$("#lbNext"):$("#lbPrev")).click(); x0=null; }); })();
 document.addEventListener("click",e=>{
   const r=e.target.closest("[data-rem]"); if(r){ const k=r.dataset.rem; reminders=reminders.includes(k)?reminders.filter(x=>x!==k):[...reminders,k]; store.set("rem",reminders); SFX.open(); renderShows(); toast(reminders.includes(k)?"Saved. We'll keep this one handy ✦":"Reminder removed"); completeTask("remind"); }
   const c=e.target.closest("[data-copy]"); if(c){ const s=upcoming()[+c.dataset.copy]; const d=fmtDate(s.date,s.time);
@@ -849,7 +999,12 @@ $("#main").addEventListener("scroll",syncHeaderLogo);
 
 /* ================= installable app (PWA) ================= */
 const SHARE_ICON='<svg class="ios-share" viewBox="0 0 24 24" fill="none" stroke="#7cc4ff" stroke-width="2"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg>';
-const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+// The app counts as installed if it was opened from the home-screen icon (start_url carries ?source=app),
+// if the phone reports an app-style window, or if this phone has installed it before.
+const fromIcon=/[?&]source=app\b/.test(location.search);
+if(fromIcon) store.set("installed",true);
+const isStandalone=()=>fromIcon||store.get("installed",false)||["standalone","fullscreen","minimal-ui","window-controls-overlay"].some(m=>matchMedia("(display-mode: "+m+")").matches)||navigator.standalone===true;
+function hideInstall(){ $("#install").classList.remove("show"); clearTimeout(window._instT); }
 const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 let deferredPrompt=null;
 function showInstall(mode){
@@ -857,17 +1012,21 @@ function showInstall(mode){
   const t=$("#installText"), b=$("#installBtn");
   if(mode==="prompt"){ t.innerHTML="<b>Get the NYTEGAZE app</b>Add it to your home screen. Free, no app store."; b.style.display=""; }
   else { t.innerHTML="<b>Get the NYTEGAZE app</b>Tap "+SHARE_ICON+" Share, then <b style='display:inline;font-size:13px'>Add to Home Screen</b>"; b.style.display="none"; }
-  setTimeout(()=>$("#install").classList.add("show"),3500);
+  clearTimeout(window._instT); window._instT=setTimeout(()=>{ if(!isStandalone()) $("#install").classList.add("show"); },3500);
 }
-addEventListener("beforeinstallprompt",e=>{ e.preventDefault(); deferredPrompt=e; showInstall("prompt"); });
+addEventListener("beforeinstallprompt",e=>{ e.preventDefault(); deferredPrompt=e; store.set("installed",false); showInstall("prompt"); });
 if(isIOS && !isStandalone()) showInstall("ios");
-$("#installBtn").onclick=async()=>{ if(!deferredPrompt) return; deferredPrompt.prompt(); const r=await deferredPrompt.userChoice; deferredPrompt=null; $("#install").classList.remove("show"); if(r.outcome==="accepted"){ SFX.win(); confetti(60); } };
+// Android Chrome: if the app is already installed, hide the pop-up even in a normal browser tab.
+if(navigator.getInstalledRelatedApps){ navigator.getInstalledRelatedApps().then(apps=>{ if(apps&&apps.length){ store.set("installed",true); hideInstall(); } }).catch(()=>{}); }
+// Show whether this is the installed app on the More page
+addEventListener("load",()=>{ const el=$("#appStatus"); if(el) el.innerHTML=isStandalone()?"✓ You're using the installed app.":"You're in the browser right now."; });
+$("#installBtn").onclick=async()=>{ if(!deferredPrompt) return; deferredPrompt.prompt(); const r=await deferredPrompt.userChoice; deferredPrompt=null; hideInstall(); if(r.outcome==="accepted"){ store.set("installed",true); SFX.win(); confetti(60); } };
 $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("installDismissed",Date.now()+3*864e5); };
-addEventListener("appinstalled",()=>{ $("#install").classList.remove("show"); toast("NYTEGAZE is on your home screen ✦"); });
+addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 if("serviceWorker" in navigator && location.protocol==="https:"){ addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
 
 /* ================= boot ================= */
-renderCountdown(); setInterval(()=>{ renderCountdown(); if($("#v-giveaways").classList.contains("on")){ const c=$("#gCount"); if(c){ const ms=Math.max(0,new Date(BAND.giveaway.ends)-now()); c.innerHTML=[[Math.floor(ms/864e5),"DAYS"],[Math.floor(ms/36e5)%24,"HRS"],[Math.floor(ms/6e4)%60,"MIN"],[Math.floor(ms/1e3)%60,"SEC"]].map(([v,l])=>`<div><b>${String(v).padStart(2,"0")}</b><span>${l}</span></div>`).join(""); } } },1000);
+renderCountdown(); setInterval(()=>{ renderCountdown(); document.querySelectorAll("[data-count]").forEach(el=>{ const ms=+el.dataset.count-now(); if(ms<=0){ renderShows(); return; } el.innerHTML=countHTML(ms); }); if($("#v-giveaways").classList.contains("on")){ const c=$("#gCount"); if(c){ const ms=Math.max(0,new Date(BAND.giveaway.ends)-now()); c.innerHTML=[[Math.floor(ms/864e5),"DAYS"],[Math.floor(ms/36e5)%24,"HRS"],[Math.floor(ms/6e4)%60,"MIN"],[Math.floor(ms/1e3)%60,"SEC"]].map(([v,l])=>`<div><b>${String(v).padStart(2,"0")}</b><span>${l}</span></div>`).join(""); } } },1000);
 renderWall(); renderShows(); renderPoll(); renderVideos(); renderMerch(); renderGift(); updatePlayer();
 go(location.hash.slice(1)||"home",true); syncHeaderLogo();
 </script>

@@ -1,6 +1,6 @@
 // NYTEGAZE offline support.
 // Bump VERSION whenever you change images or icons so phones pick up the new files.
-const VERSION = "nytegaze-v1";
+const VERSION = "nytegaze-v2";
 const CORE = ["./", "index.html", "manifest.webmanifest", "img/logo.webp", "img/icon-192.png", "img/icon-512.png", "img/apple-touch-icon.png", "img/favicon.png"];
 
 self.addEventListener("install", e => {
