@@ -480,6 +480,8 @@ const BAND = {
   ],
   // Add  src:"music/song.mp3"  to play a real file. Tracks without src play a built-in demo loop.
   tracks: [
+    // bg:true = plays softly in the background after "tap to enter". loop:true = repeats.
+    { title:"Night Menu", type:"original", sub:"App theme · 8-bit", src:"music/night-menu.mp3", bg:true, loop:true },
     { title:"Neon Constellations", type:"original", sub:"Original · Coming soon", demo:0 },
     { title:"After Hours Signal",  type:"original", sub:"Original · Demo",        demo:1 },
     { title:"Cover Song Title",    type:"cover",    sub:"Cover · Original artist",demo:2 },
@@ -565,7 +567,8 @@ const SFX = {
 function drawSfxBtn(){ $("#sfxBtn").innerHTML = sfxOn
   ? '<svg class="gx" viewBox="0 0 24 24"><path fill="url(#gx)" stroke="#141a6a" stroke-width=".7" stroke-linejoin="miter" fill-rule="evenodd" d="M2 8.5 L7.5 8.5 L14 2 L14 22 L7.5 15.5 L2 15.5 Z M16 8 L18 7 C19.6 9.6 19.6 14.4 18 17 L16 16 C17.2 14 17.2 10 16 8 Z M19 4.5 L21 3.5 C23.6 8 23.6 16 21 20.5 L19 19.5 C21.2 15.6 21.2 8.4 19 4.5 Z"/></svg>'
   : '<svg viewBox="0 0 24 24" style="opacity:.5"><path fill="#6b70a8" d="M2 8.5 L7.5 8.5 L14 2 L14 22 L7.5 15.5 L2 15.5 Z M16 9 L17.4 7.6 L19.5 9.7 L21.6 7.6 L23 9 L20.9 11.1 L23 13.2 L21.6 14.6 L19.5 12.5 L17.4 14.6 L16 13.2 L18.1 11.1 Z"/></svg>'; }
-$("#sfxBtn").onclick=()=>{ sfxOn=!sfxOn; store.set("sfx",sfxOn); drawSfxBtn(); SFX.tap(); toast(sfxOn?"Sound effects on ✦":"Sound effects off"); };
+$("#sfxBtn").onclick=()=>{ sfxOn=!sfxOn; store.set("sfx",sfxOn); drawSfxBtn(); SFX.tap();
+  if(!sfxOn){ if(playing&&bgMode) pause(); toast("Sound off"); } else { toast("Sound on ✦"); startBgm(); } };
 drawSfxBtn();
 
 /* ================= neon star sky ================= */
@@ -810,13 +813,21 @@ function stopDemo(){ clearInterval(seqTimer); seqTimer=null; if(demoBus){ const 
 const list=()=>{ const all=userTrack?[userTrack,...BAND.tracks]:BAND.tracks; return filter==="all"?all:all.filter(t=>t.type===filter); };
 const allTracks=()=>userTrack?[userTrack,...BAND.tracks]:BAND.tracks;
 function isReal(t){ return !!t.src; }
-function play(i,offset=0){
+let musicGain=null, bgMode=false;
+function play(i,offset=0,background=false){
   const L=allTracks(); cur=(i+L.length)%L.length; const t=L[cur]; ac();
-  stopDemo(); audio.pause();
-  if(isReal(t)){ if(!mediaSrc){ mediaSrc=AC.createMediaElementSource(audio); mediaSrc.connect(getAnalyser()); }
-    if(audio.src!==t.src) audio.src=t.src; audio.currentTime=offset; audio.play().catch(()=>toast("Couldn't play that file")); }
+  stopDemo(); audio.pause(); bgMode=background;
+  if(isReal(t)){ if(!mediaSrc){ mediaSrc=AC.createMediaElementSource(audio); musicGain=AC.createGain(); mediaSrc.connect(musicGain).connect(getAnalyser()); }
+    musicGain.gain.setTargetAtTime(background?.35:1,AC.currentTime,background?.8:.05);
+    audio.loop=!!t.loop;
+    if(!audio.src.endsWith(t.src)) audio.src=t.src; audio.currentTime=offset; audio.play().catch(()=>{ if(!background) toast("Couldn't play that file"); }); }
   else startDemo(t.demo||0,offset);
-  playing=true; completeTask("listen"); updatePlayer();
+  playing=true; if(!background) completeTask("listen"); updatePlayer();
+}
+// Soft background music: starts after the first tap (phones block sound before that)
+function startBgm(){
+  if(!sfxOn||playing) return; const i=allTracks().findIndex(t=>t.bg&&t.src); if(i<0) return;
+  if(musicGain) musicGain.gain.value=0; play(i,0,true);
 }
 function pause(){ if(!playing) return; const t=allTracks()[cur]; if(isReal(t)) audio.pause(); else { pausedAt=AC.currentTime-seqStart; stopDemo(); } playing=false; updatePlayer(); }
 let pausedAt=0;
@@ -991,8 +1002,10 @@ $("#sheetBg").onclick=e=>{ if(e.target.id==="sheetBg") closeSheet(); };
 document.addEventListener("click",e=>{ if(e.target.closest("button,.tap,a")&&!e.target.closest("nav,[data-go],#sfxBtn,[data-play],[data-vote],[data-merch],#playBtn,#miniPlay,#next,#prev")) SFX.tap(); },true);
 $("#logo").onclick=()=>go("home");
 $("#heroLogo").onclick=()=>{ SFX.star(Math.floor(Math.random()*7)); $("#heroLogo").animate([{transform:"scale(1)"},{transform:"scale(1.06) rotate(-1deg)",filter:"brightness(1.6)"},{transform:"scale(1)"}],{duration:500}); };
-function hideSplash(){ const sp=$("#splash"); if(sp.classList.contains("gone")) return; sp.classList.add("gone"); try{ ac(); SFX.win(); }catch(e){} }
-$("#splash").onclick=hideSplash; setTimeout(hideSplash,2600);
+function hideSplash(fromTap){ const sp=$("#splash"); if(sp.classList.contains("gone")) return; sp.classList.add("gone");
+  if(fromTap===true){ try{ ac(); SFX.win(); startBgm(); }catch(e){} }
+  else addEventListener("pointerdown",()=>{ try{ startBgm(); }catch(e){} },{once:true,capture:true}); }
+$("#splash").onclick=()=>hideSplash(true); setTimeout(hideSplash,2600);
 function syncHeaderLogo(){ $("#logo").classList.toggle("hide", $("#v-home").classList.contains("on") && $("#main").scrollTop<140); }
 $("#main").addEventListener("scroll",syncHeaderLogo);
 

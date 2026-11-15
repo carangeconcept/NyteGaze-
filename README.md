@@ -23,7 +23,7 @@ All the band info lives in one block near the top of the `<script>` in `index.ht
 | Member names, bios, facts, socials, photo | `members` (add `photo:"img/name.jpg"`) |
 | Shows | `shows`: dates are `YYYY-MM-DD`. Put flyers in `img/flyers/` and set `flyer:"img/flyers/name.jpg"` |
 | Past-show photos & videos | `media:[ ...links... ]` on that show. Paste Google Drive, YouTube, Instagram or TikTok links. Add `#video` to the end of a Drive video link. `driveFolder:` adds the whole folder. |
-| Songs | `tracks` (add `src:"music/song.mp3"`) |
+| Songs | `tracks` (add `src:"music/song.mp3"`). `bg:true` makes a song the soft background music, `loop:true` repeats it. |
 | Videos | `videos` (add `src:"video/clip.mp4"`) |
 | Merch | `merch` |
 | Giveaway | `giveaway` (title, description, end date) |

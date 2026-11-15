@@ -1,6 +1,6 @@
 // NYTEGAZE offline support.
 // Bump VERSION whenever you change images or icons so phones pick up the new files.
-const VERSION = "nytegaze-v2";
+const VERSION = "nytegaze-v3";
 const CORE = ["./", "index.html", "manifest.webmanifest", "img/logo.webp", "img/icon-192.png", "img/icon-512.png", "img/apple-touch-icon.png", "img/favicon.png"];
 
 self.addEventListener("install", e => {
@@ -12,6 +12,8 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   const req = e.request;
   if (req.method !== "GET") return;
+  // Let songs and videos stream straight from the server (phones request them in pieces).
+  if (req.headers.has("range") || /\.(mp3|m4a|wav|mp4|mov|webm)(\?|$)/i.test(new URL(req.url).pathname)) return;
   // Pages: try the network first so fans always see the newest shows, fall back to the saved copy offline.
   if (req.mode === "navigate") {
     e.respondWith(fetch(req).then(r => { const copy = r.clone(); caches.open(VERSION).then(c => c.put("index.html", copy)); return r; })
