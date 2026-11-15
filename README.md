@@ -33,6 +33,12 @@ Changes go live about a minute after you save. Fans see them the next time they 
 
 If you change any image or icon, also change `VERSION` in `sw.js` (for example `nytegaze-v2`) so phones pick up the new files.
 
+## Google Drive folders (synced nightly)
+Drop files into the NYTEGAZE folder in Google Drive and the nightly sync adds them to the app:
+- `Members/Naya`, `Members/Dana`, `Members/Augie`, `Members/Josh`, `Members/Drummer`: photos of that person.
+- `Shows/YYYY-MM-DD Venue`: photos and videos from that show.
+- `Flyers`: new show flyers. The date, time, venue and lineup are read from the flyer.
+
 ## Showing photos from Google Drive
 Share each file or folder as **Anyone with the link → Viewer**, or it won't appear in the app.
 Shows move from Upcoming to Past on their own once the date passes.

@@ -506,7 +506,7 @@ const BAND = {
         "https://drive.google.com/file/d/1uH0_0vP2jxdG3rRT2JgEiSvFMxd5xCR7/view",
         "https://drive.google.com/file/d/1bC8TlCt9v0gJhSyl2egmqoGArThIHpsV/view",
       ],
-      driveFolder:"https://drive.google.com/drive/folders/1LTkVP8EHfVUDXUSEA5PAG_S8UAm0dm0P" },
+      driveFolder:"https://drive.google.com/drive/folders/1dLIuOF_y6fjP5jiBpJ7fQ97jX7YNNCq3" },
   ],
   // Add  src:"music/song.mp3"  to play a real file. Tracks without src play a built-in demo loop.
   tracks: [
@@ -1081,7 +1081,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-12";
+const APP_BUILD="2026.11.15-13";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
