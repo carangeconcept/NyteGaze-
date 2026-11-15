@@ -402,7 +402,9 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
       <h2>Get the app</h2>
       <div class="card"><p class="mono" id="appStatus" style="color:var(--cyan);font-size:13px;margin-bottom:8px"></p><p class="muted">Save NYTEGAZE to your home screen so it opens like a regular app.</p>
         <p class="muted" style="margin-top:8px"><b style="color:var(--text)">iPhone:</b> open this page in Safari, tap Share, then <i>Add to Home Screen</i>.</p>
-        <p class="muted" style="margin-top:6px"><b style="color:var(--text)">Android:</b> tap the Install pop-up, or the ⋮ menu, then <i>Install app</i>.</p></div>
+        <p class="muted" style="margin-top:6px"><b style="color:var(--text)">Android:</b> tap the Install pop-up, or the ⋮ menu, then <i>Install app</i> or <i>Add to Home screen</i>.</p>
+        <p class="muted" style="margin-top:6px"><b style="color:var(--text)">Opened from Instagram, Messenger, Snapchat or Discord?</b> Those apps use their own mini browser that can't install apps. Open the link in Safari or Chrome first.</p>
+        <button class="btn ghost full" id="copyLink" style="margin-top:10px">Copy app link</button></div>
       <h2>Booking</h2>
       <div class="card"><p class="muted">Want NYTEGAZE at your venue or event?</p><p class="mono" style="margin-top:6px;color:var(--cyan)" id="bookingEmail"></p></div>
     </section>
@@ -1110,31 +1112,51 @@ $("#main").addEventListener("scroll",syncHeaderLogo);
 const SHARE_ICON='<svg class="ios-share" viewBox="0 0 24 24" fill="none" stroke="#7cc4ff" stroke-width="2"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg>';
 // The app counts as installed if it was opened from the home-screen icon (start_url carries ?source=app),
 // if the phone reports an app-style window, or if this phone has installed it before.
-const fromIcon=/[?&]source=app\b/.test(location.search);
-if(fromIcon) store.set("installed",true);
+const fromIcon=/[?&]source=app\b/.test(location.search) && navigator.standalone!==false; // iPhone tells us reliably when it's a normal Safari tab
+// Only remember "installed" when we're really in an app window, and strip the tag from the address
+// so a link copied out of the app and shared with a friend doesn't hide the install pop-up for them.
+if(fromIcon){ if(!matchMedia("(display-mode: browser)").matches) store.set("installed",true);
+  try{ const u=new URL(location.href); u.searchParams.delete("source"); history.replaceState(history.state,"",u.pathname+u.search+u.hash); }catch(e){} }
 const isStandalone=()=>fromIcon||store.get("installed",false)||["standalone","fullscreen","minimal-ui","window-controls-overlay"].some(m=>matchMedia("(display-mode: "+m+")").matches)||navigator.standalone===true;
 function hideInstall(){ $("#install").classList.remove("show"); clearTimeout(window._instT); }
 const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 let deferredPrompt=null;
+const UA=navigator.userAgent;
+// Apps like Instagram, Facebook, Messenger, Snapchat, TikTok and Discord open links in their own mini browser, which can't install apps.
+const inAppBrowser=/Instagram|FBAN|FBAV|FB_IAB|Messenger|Snapchat|Line\/|TikTok|musical_ly|BytedanceWebview|Twitter|Discord|GSA\/|; wv\)/i.test(UA);
+const isAndroid=/android/i.test(UA);
+const SITE_URL=location.origin+location.pathname;
+let installMode="";
 function showInstall(mode){
   if(isStandalone()||store.get("installDismissed",0)>Date.now()) return;
-  const t=$("#installText"), b=$("#installBtn");
-  if(mode==="prompt"){ t.innerHTML="<b>Get the NYTEGAZE app</b>Add it to your home screen. Free, no app store."; b.style.display=""; }
+  installMode=mode;
+  const t=$("#installText"), b=$("#installBtn"); b.style.display=""; b.textContent="Install";
+  if(mode==="prompt"){ t.innerHTML="<b>Get the NYTEGAZE app</b>Add it to your home screen. Free, no app store."; }
+  else if(mode==="inapp"){ t.innerHTML="<b>Get the NYTEGAZE app</b>"+(isIOS?"Tap ⋯ and choose <b style='display:inline;font-size:13px'>Open in Safari</b>, then Share → Add to Home Screen.":"Tap ⋮ and choose <b style='display:inline;font-size:13px'>Open in Chrome</b>, then install it from there."); b.textContent="Copy link"; }
+  else if(mode==="android"){ t.innerHTML="<b>Get the NYTEGAZE app</b>Tap the ⋮ menu, then <b style='display:inline;font-size:13px'>Add to Home screen</b> or <b style='display:inline;font-size:13px'>Install app</b>."; b.style.display="none"; }
   else { t.innerHTML="<b>Get the NYTEGAZE app</b>Tap "+SHARE_ICON+" Share, then <b style='display:inline;font-size:13px'>Add to Home Screen</b>"; b.style.display="none"; }
-  clearTimeout(window._instT); window._instT=setTimeout(()=>{ if(!isStandalone()) $("#install").classList.add("show"); },3500);
+  clearTimeout(window._instT); window._instT=setTimeout(()=>{ if(!isStandalone()) $("#install").classList.add("show"); },mode==="prompt"||mode==="android"?1000:3500);
 }
 addEventListener("beforeinstallprompt",e=>{ e.preventDefault(); deferredPrompt=e; store.set("installed",false); showInstall("prompt"); });
-if(isIOS && !isStandalone()) showInstall("ios");
+if(!isStandalone()){
+  if(inAppBrowser) showInstall("inapp");
+  else if(isIOS) showInstall("ios");
+  // Android browsers that never offer the one-tap install (Firefox, some Samsung/other browsers, or Chrome before it decides to)
+  else if(isAndroid) setTimeout(()=>{ if(!deferredPrompt && !isStandalone()) showInstall("android"); },4000);
+}
 // Android Chrome: if the app is already installed, hide the pop-up even in a normal browser tab.
 if(navigator.getInstalledRelatedApps){ navigator.getInstalledRelatedApps().then(apps=>{ if(apps&&apps.length){ store.set("installed",true); hideInstall(); } }).catch(()=>{}); }
 // Show whether this is the installed app on the More page
 addEventListener("load",()=>{ const el=$("#appStatus"); if(el) el.innerHTML=(isStandalone()?"✓ You're using the installed app.":"You're in the browser right now.")+`<br><span style="color:var(--dim)">Version ${APP_BUILD}</span>`; });
-$("#installBtn").onclick=async()=>{ if(!deferredPrompt) return; deferredPrompt.prompt(); const r=await deferredPrompt.userChoice; deferredPrompt=null; hideInstall(); if(r.outcome==="accepted"){ store.set("installed",true); SFX.win(); confetti(60); } };
+$("#installBtn").onclick=async()=>{
+  if(installMode==="inapp"){ try{ await navigator.clipboard.writeText(SITE_URL); toast("Link copied. Paste it into "+(isIOS?"Safari":"Chrome")+" ✦"); }catch(e){ prompt("Copy this link and open it in "+(isIOS?"Safari":"Chrome")+":",SITE_URL); } return; }
+  if(!deferredPrompt) return; deferredPrompt.prompt(); const r=await deferredPrompt.userChoice; deferredPrompt=null; hideInstall(); if(r.outcome==="accepted"){ store.set("installed",true); SFX.win(); confetti(60); } };
 $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("installDismissed",Date.now()+3*864e5); };
+$("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_URL); toast("Link copied ✦"); }catch(e){ prompt("Copy this link:",SITE_URL); } };
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-29";
+const APP_BUILD="2026.11.15-30";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
