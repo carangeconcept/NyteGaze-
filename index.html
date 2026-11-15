@@ -479,6 +479,17 @@ const BAND = {
      credits: e.g. "Photos by <photographer>", shown above the gallery. A single item can carry its own caption: { url:"...", caption:"📷 name" }.
      Drive files and folders must be shared as "Anyone with the link".                     */
   shows: [
+    { date:"2026-12-12", time:"18:30", venue:"Fulton 55", city:"Fresno, CA", address:"875 Divisadero St, Fresno, CA 93721",
+      tickets:"https://www.instagram.com/p/Ddkizjymvf7/", note:"Pop Goes Punk Cover Night Vol. 2 · Doors 6:30 PM · 21+ · $15 presale / $18 door", presenter:"Arkyn Audio",
+      lineup:[
+        { name:"The Things We Bury" },
+        { name:"Pansy Party" },
+        { name:"Gnosis" },
+        { name:"Nyte Gaze", us:true },
+      ],
+      flyer:"img/flyers/2026-12-12-fulton-55.jpg",
+      media:[],
+      driveFolder:"" },
     { date:"2026-11-14", time:"18:00", venue:"Strummer's", city:"Fresno, CA", address:"833 E Fern Ave, Fresno, CA 93728",
       tickets:"https://strummersclub.com", note:"All ages · Nyte Gaze as Fall Out Boy", presenter:"Rad Music",
       lineup:[
@@ -1117,7 +1128,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-20";
+const APP_BUILD="2026.11.15-21";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
