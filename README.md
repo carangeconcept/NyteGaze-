@@ -34,7 +34,14 @@ Changes go live about a minute after you save. Fans see them the next time they 
 If you change any image or icon, also change `VERSION` in `sw.js` (for example `nytegaze-v2`) so phones pick up the new files.
 
 ## Google Drive folders (synced nightly)
-Drop files into the NYTEGAZE folder in Google Drive and the nightly sync adds them to the app:
+**Easiest: drag anything into `Inbox (drop everything here)`.** Every night at 11:37 PM the sync sorts it and adds it to the app:
+- Flyers become upcoming shows. Show photos/videos go to the show from the date they were taken (after-midnight counts as the night before).
+- Photographers are credited automatically: `_AS…` files = photography_by_amauri, `shootwithsilence-…` = shootwithsilence, a folder or name with "kitty" = Kitty.
+- A member's photos: put them in a sub-folder named after them (`Inbox/Naya/…`) or put their name in the file name. People are never sorted by face.
+- A weekly update: put "update" or "weekly" in the video's name or folder.
+- Anything it can't place stays in the Inbox and is listed in the nightly summary.
+
+You can also drop files straight into these folders:
 - `Weekly Updates`: your weekly video. The file name becomes the title (e.g. `Strummers recap and whats next.mp4`); the Drive file's description becomes the text under it. The newest one shows at the top of the home screen with a NEW badge.
 - `Members/Naya`, `Members/Dana`, `Members/Augie`, `Members/Josh`, `Members/Drummer`: photos of that person.
 - `Shows/YYYY-MM-DD Venue`: photos and videos from that show.
