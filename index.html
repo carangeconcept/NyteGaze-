@@ -215,6 +215,9 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
 #lb .stage iframe{width:100%;max-width:480px;border:0;border-radius:12px;background:#000}
 #lb .nav2{display:flex;justify-content:space-between;align-items:center;padding:8px 16px calc(14px + var(--safe-b))}
 #lb .cap{font-size:13px;color:var(--dim);text-align:center;flex:1;padding:0 8px}
+#updBar{position:fixed;left:50%;top:calc(10px + var(--safe-t));transform:translate(-50%,-160%);z-index:70;padding:12px 18px;border-radius:999px;border:1px solid #6a7bff;
+  background:linear-gradient(100deg,#3346ff,#7b5cff 55%,#d86fe6);color:#fff;font-size:14px;box-shadow:0 0 26px -4px #5c6bff;transition:transform .5s cubic-bezier(.2,.8,.2,1);white-space:nowrap}
+#updBar.show{transform:translate(-50%,0)}
 /* install banner */
 #install{position:fixed;left:50%;transform:translate(-50%,calc(-100% - 40px));top:calc(10px + var(--safe-t));width:calc(100% - 28px);max-width:452px;z-index:15;display:flex;gap:12px;align-items:center;padding:12px 12px 12px 14px;border-radius:20px;background:rgba(10,12,48,.95);border:1px solid #6a7bff;box-shadow:0 0 30px -6px #5c6bff;backdrop-filter:blur(16px);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 #install.show{transform:translate(-50%,0)}
@@ -1072,7 +1075,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-9";
+const APP_BUILD="2026.11.15-10";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
@@ -1081,6 +1084,19 @@ if("serviceWorker" in navigator && location.protocol==="https:"){
     document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") reg.update().catch(()=>{}); });
   }).catch(()=>{}); });
 }
+// Check whether GitHub has a newer version of the page and offer a one-tap refresh.
+let updateShown=false;
+async function checkForUpdate(){
+  if(updateShown||location.protocol!=="https:") return;
+  try{ const t=await (await fetch("./?vcheck="+Date.now(),{cache:"no-store"})).text();
+    const v=(t.match(/APP_BUILD="([^"]+)"/)||[])[1];
+    if(v&&v!==APP_BUILD){ updateShown=true; const b=document.createElement("button"); b.id="updBar";
+      b.innerHTML="✦ New update ready · <b>Tap to refresh</b>"; b.onclick=()=>location.reload(); document.body.appendChild(b);
+      requestAnimationFrame(()=>b.classList.add("show")); } }catch(e){}
+}
+addEventListener("load",()=>setTimeout(checkForUpdate,4000));
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") checkForUpdate(); });
+setInterval(checkForUpdate,10*60*1000);
 
 /* ================= boot ================= */
 renderCountdown(); setInterval(()=>{ renderCountdown(); document.querySelectorAll("[data-count]").forEach(el=>{ const ms=+el.dataset.count-now(); if(ms<=0){ renderShows(); return; } el.innerHTML=countHTML(ms); }); if($("#v-giveaways").classList.contains("on")){ const c=$("#gCount"); if(c){ const ms=Math.max(0,new Date(BAND.giveaway.ends)-now()); c.innerHTML=[[Math.floor(ms/864e5),"DAYS"],[Math.floor(ms/36e5)%24,"HRS"],[Math.floor(ms/6e4)%60,"MIN"],[Math.floor(ms/1e3)%60,"SEC"]].map(([v,l])=>`<div><b>${String(v).padStart(2,"0")}</b><span>${l}</span></div>`).join(""); } } },1000);
