@@ -591,6 +591,8 @@ const BAND = {
   // WEEKLY UPDATES: newest first. video can be a Google Drive link (add #video), YouTube, Instagram, TikTok or an .mp4 in videos/.
   // thumb is optional (a picture shown before play). date is the week it covers.
   updates: [
+    { date:"2026-11-16", title:"Ep. 01: Strummer's recap + what's next", video:"videos/weekly-update-ep01.mp4", thumb:"img/updates/ep01.jpg",
+      notes:"Our night at Strummer's, photos by @shootwithsilence, Fulton 55 on Dec 12, and a first taste of a new demo ✦" },
     // { date:"2026-11-16", title:"Strummer's recap + what's next", video:"https://drive.google.com/file/d/FILE_ID/view#video", notes:"Recap of Strummer's, Fulton 55 on Dec 12, and a tiny teaser." },
   ],
   videos: [
@@ -1232,7 +1234,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-35";
+const APP_BUILD="2026.11.15-36";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
