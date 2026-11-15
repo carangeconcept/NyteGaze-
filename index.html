@@ -232,6 +232,18 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
   #lb .stage iframe{height:100%!important;min-height:0!important;width:100%;max-width:none!important;aspect-ratio:auto!important;border-radius:0}
   #lb .stage img,#lb .stage video{max-height:100vh}
 }
+/* instagram panel */
+.ig{padding:12px 0 10px;overflow:hidden}
+.ig .ighead{display:flex;align-items:center;gap:10px;padding:0 14px 10px}
+.ig .igava{width:42px;height:42px;border-radius:50%;padding:2px;background:conic-gradient(from 200deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5,#feda75);flex:none}
+.ig .igava img{width:100%;height:100%;border-radius:50%;object-fit:cover;background:#05030f;border:2px solid #05030f}
+.ig .igfollow{margin-left:auto;padding:8px 14px;border-radius:10px;font-weight:800;font-size:13px;color:#fff;text-decoration:none;background:linear-gradient(90deg,#d62976,#962fbf,#4f5bd5);box-shadow:0 0 16px -4px #d62976}
+.ig .igrow{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 14px 6px;scrollbar-width:none}
+.ig .igrow::-webkit-scrollbar{display:none}
+.ig .igpost{flex:none;width:min(300px,78vw);height:500px;border-radius:14px;overflow:hidden;scroll-snap-align:center;background:#fff;position:relative}
+.ig .igpost iframe{width:100%;height:100%;border:0;display:block}
+.ig .igpost .igload{position:absolute;inset:0;display:grid;place-items:center;color:#888;font-size:13px;background:#fafafa}
+.ig .ighint{padding:4px 14px 0;font-size:12px;color:var(--dim)}
 /* weekly update */
 .wu{position:relative;padding:0;overflow:hidden;cursor:pointer;border-color:#6a7bff;box-shadow:0 0 34px -10px #ff3df2}
 .wu .thumb{position:relative;aspect-ratio:16/9;background:radial-gradient(120% 90% at 30% 20%,#3a1f8a,#0b0a2a 60%,#05030f);display:grid;place-items:center;overflow:hidden}
@@ -307,6 +319,7 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
       <h2>Latest drop</h2>
       <div class="card tap" id="homeTrack" style="cursor:pointer"></div>
       <h2>Follow the signal</h2>
+      <div class="card ig" id="igPanel"></div>
       <div class="socials" id="bandSocials"></div>
       <h2>Fan wall</h2>
       <div class="card">
@@ -469,6 +482,25 @@ const BAND = {
     "shootwithsilence":      { short:"Silence", url:"https://www.instagram.com/cxoto/", icon:"silence", color:"#3df6ff" },
     "photography_by_amauri": { short:"Amauri",  url:"https://www.instagram.com/photography_by_amauri/", icon:"aperture", color:"#ffd86b" },
     "kitty":                 { short:"Kitty",   url:"", icon:"cat", color:"#ff7fd6" },
+  },
+  // INSTAGRAM PANEL on the home screen: newest first. Paste post or reel links (any account's link works, e.g. collabs).
+  instagram: {
+    handle: "nytegaze_official",
+    url: "https://www.instagram.com/nytegaze_official/",
+    posts: [
+      "https://www.instagram.com/p/Dbvx7O7MRsS/",
+      "https://www.instagram.com/p/Db1uJ2AmoA-/",
+      "https://www.instagram.com/reel/Db6E2BGhIC8/",
+      "https://www.instagram.com/p/Dfx3IivDQuP/",
+      "https://www.instagram.com/p/Dfx0tIDkn4d/",
+      "https://www.instagram.com/p/DfxvqU6khBD/",
+      "https://www.instagram.com/reel/DfsOdxBNZQs/",
+      "https://www.instagram.com/reel/DfqAgDSy_zf/",
+      "https://www.instagram.com/reel/Dfh7PNRtahI/",
+      "https://www.instagram.com/reel/DfVNkE0BPxX/",
+      "https://www.instagram.com/reel/DfTeMkTh68j/",
+      "https://www.instagram.com/p/DeklvYpj-UU/",
+    ],
   },
   socials: [
     { name:"Instagram", url:"https://www.instagram.com/nytegaze_official/" },
@@ -880,7 +912,7 @@ function renderCountdown(){
   $("#count").innerHTML=[[D,"DAYS"],[Hh,"HRS"],[M,"MIN"],[S,"SEC"]].map(([v,l])=>`<div><b>${String(v).padStart(2,"0")}</b><span>${l}</span></div>`).join("");
 }
 function socialTiles(list){ return list.map(s=>`<a class="soc tap" href="${esc(s.url)}" target="_blank" rel="noopener">${ICONS[s.name]||ICONS.Email}${esc(s.name)}</a>`).join(""); }
-$("#bandSocials").innerHTML=socialTiles(BAND.socials);
+$("#bandSocials").innerHTML=socialTiles(BAND.instagram&&(BAND.instagram.posts||[]).length?BAND.socials.filter(x=>x.name!=="Instagram"):BAND.socials); renderIG();
 
 /* Fan wall: shared between every phone and computer, stored in Supabase (table public.fan_wall).
    The publishable key is meant to be public; the table's security rules only allow reading visible posts and adding new ones. */
@@ -1200,6 +1232,23 @@ function renderVideos(){ $("#videos").innerHTML=BAND.videos.map((v,i)=>`<div cla
 $("#videoFile").onchange=e=>{ const f=e.target.files[0]; if(!f) return; BAND.videos.unshift({title:f.name,sub:"Preview",src:URL.createObjectURL(f)}); renderVideos(); SFX.open(); };
 
 
+
+/* ================= instagram panel ================= */
+function renderIG(){ const g=BAND.instagram; if(!g||!(g.posts||[]).length){ $("#igPanel").remove(); return; }
+  const id=u=>{ const m=String(u).match(/instagram\.com\/(?:[\w.]+\/)?(p|reel|tv)\/([\w-]+)/); return m?m[2]:null; };
+  const posts=g.posts.map(id).filter(Boolean);
+  $("#igPanel").innerHTML=`<div class="ighead"><div class="igava"><img src="img/logo.webp" alt=""></div>
+      <div style="min-width:0"><b style="display:block">@${esc(g.handle)}</b><span class="muted" style="font-size:12px">Latest on Instagram</span></div>
+      <a class="igfollow tap" href="${esc(g.url)}" target="_blank" rel="noopener">Follow</a></div>
+    <div class="igrow" id="igRow">${posts.map(p=>`<div class="igpost" data-ig="${esc(p)}"><div class="igload">Loading post…</div></div>`).join("")}</div>
+    <div class="ighint">Swipe for more →</div>`;
+  const row=$("#igRow");
+  const load=el=>{ if(el.dataset.loaded) return; el.dataset.loaded=1;
+    el.insertAdjacentHTML("beforeend",`<iframe src="https://www.instagram.com/p/${el.dataset.ig}/embed/" loading="lazy" scrolling="no" allowtransparency="true" title="Instagram post"></iframe>`); };
+  if("IntersectionObserver" in window){ const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ load(e.target); io.unobserve(e.target); } }),{root:row,rootMargin:"0px 320px"});
+    row.querySelectorAll(".igpost").forEach(el=>io.observe(el)); } else row.querySelectorAll(".igpost").forEach(load);
+}
+
 /* ================= weekly update ================= */
 const updates=()=>(BAND.updates||[]).filter(u=>u&&u.video).slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
 const updKey=u=>(u.date||"")+"|"+(u.title||"");
@@ -1363,7 +1412,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-45";
+const APP_BUILD="2026.11.15-46";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
