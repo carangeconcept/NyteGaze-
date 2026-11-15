@@ -6,15 +6,31 @@
   "start_url": "./?source=app",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#04051a",
   "theme_color": "#04051a",
   "related_applications": [
-    { "platform": "webapp", "url": "https://carangeconcept.github.io/NyteGaze-/manifest.webmanifest" }
+    {
+      "platform": "webapp",
+      "url": "https://carangeconcept.github.io/NyteGaze-/manifest.webmanifest"
+    }
   ],
   "icons": [
-    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "img/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "img/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "img/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "img/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

@@ -218,6 +218,17 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
 #updBar{position:fixed;left:50%;top:calc(10px + var(--safe-t));transform:translate(-50%,-160%);z-index:70;padding:12px 18px;border-radius:999px;border:1px solid #6a7bff;
   background:linear-gradient(100deg,#3346ff,#7b5cff 55%,#d86fe6);color:#fff;font-size:14px;box-shadow:0 0 26px -4px #5c6bff;transition:transform .5s cubic-bezier(.2,.8,.2,1);white-space:nowrap}
 #updBar.show{transform:translate(-50%,0)}
+/* sideways phone: the viewer goes full screen, controls float on top */
+@media (orientation:landscape) and (max-height:600px){
+  #lb .top{position:absolute;top:0;left:0;right:0;z-index:3;padding:8px 12px;pointer-events:none}
+  #lb .top>*{pointer-events:auto}
+  #lb .nav2{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);z-index:3;padding:0 8px;pointer-events:none}
+  #lb .nav2 button{pointer-events:auto;opacity:.75}
+  #lb .cap{display:none}
+  #lb .stage{padding:0}
+  #lb .stage iframe{height:100%!important;min-height:0!important;width:100%;max-width:none!important;aspect-ratio:auto!important;border-radius:0}
+  #lb .stage img,#lb .stage video{max-height:100vh}
+}
 /* install banner */
 #install{position:fixed;left:50%;transform:translate(-50%,calc(-100% - 40px));top:calc(10px + var(--safe-t));width:calc(100% - 28px);max-width:452px;z-index:15;display:flex;gap:12px;align-items:center;padding:12px 12px 12px 14px;border-radius:20px;background:rgba(10,12,48,.95);border:1px solid #6a7bff;box-shadow:0 0 30px -6px #5c6bff;backdrop-filter:blur(16px);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 #install.show{transform:translate(-50%,0)}
@@ -1075,7 +1086,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-10";
+const APP_BUILD="2026.11.15-11";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
