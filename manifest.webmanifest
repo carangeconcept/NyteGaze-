@@ -1,0 +1,17 @@
+{
+  "name": "NYTEGAZE",
+  "short_name": "NYTEGAZE",
+  "description": "The official NYTEGAZE app: shows, music, the band, merch and giveaways.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#04051a",
+  "theme_color": "#04051a",
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "img/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
