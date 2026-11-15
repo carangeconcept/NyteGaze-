@@ -450,7 +450,7 @@ const BAND = {
      facts / socials: leave empty {} or [] and that part is hidden.                          */
   members: [
     { id:"vox",   name:"Naya",  role:"Vocals", color:"#ff7fd6", photo:"img/members/naya-profile.jpg",
-      photos:[ "img/members/naya-1.jpg" ],
+      photos:[ { url:"img/members/naya-1.jpg", caption:"📷 shootwithsilence" } ],
       bio:"The voice of NYTEGAZE. Full bio coming soon.", facts:{}, socials:[] },
     { id:"gtr1",  name:"Dana",  role:"Guitar", color:"#7cc4ff", photo:"img/members/dana-profile.jpg",
       photos:[ { url:"img/members/dana-1.jpg", caption:"📷 shootwithsilence" } ],
@@ -459,7 +459,7 @@ const BAND = {
       photos:[ "img/members/augie-1.jpg" ],
       bio:"The other half of the NYTEGAZE guitar attack. Full bio coming soon.", facts:{}, socials:[] },
     { id:"bass",  name:"Josh",  role:"Bass",   color:"#5d78ff", photo:"img/members/josh-profile.jpg",
-      photos:[ "img/members/josh-1.jpg" ],
+      photos:[ { url:"img/members/josh-1.jpg", caption:"📷 shootwithsilence" } ],
       bio:"Holds down the low end. Full bio coming soon.", facts:{}, socials:[] },
     { id:"drums", name:"???",   role:"Drums",  color:"#c98bff", photo:"", photos:[],
       bio:"Our drummer is a mystery… for now. Stay tuned.", facts:{}, socials:[] },
@@ -1156,7 +1156,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-30";
+const APP_BUILD="2026.11.15-31";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
