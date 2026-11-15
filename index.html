@@ -474,7 +474,28 @@ const BAND = {
      facts / socials: leave empty {} or [] and that part is hidden.                          */
   members: [
     { id:"vox",   name:"Naya",  role:"Vocals", color:"#ff7fd6", photo:"img/members/naya-profile.jpg",
-      photos:[ { url:"img/members/naya-1.jpg", caption:"📷 shootwithsilence" } ],
+      photos:[
+        { url:"img/members/naya-1.jpg", caption:"📷 shootwithsilence" },
+        "https://drive.google.com/file/d/1SOZip_T8GugIsbUYoi1vmHaISupx0eI1/view#video",
+        "https://drive.google.com/file/d/1vieNqiYoyhg-mvYL1ADpEdIlm2kCeSJ7/view",
+        "https://drive.google.com/file/d/1w4prz8iJRv3xurSfkH8ducwVmHTJQ3yl/view",
+        "https://drive.google.com/file/d/1F5OLroFvu_uaEWi0P2eOiZtND23tJbYP/view",
+        "https://drive.google.com/file/d/1hE9NU7ODb7nmLdNX4qu4K1fQbiYEjxU0/view",
+        "https://drive.google.com/file/d/10wTqGAHMM-jVhhmrCnXahanRP8BRQRHG/view",
+        "https://drive.google.com/file/d/1uXrre5yyvpswu8ZkjHTZJKytK9qJkw19/view",
+        "https://drive.google.com/file/d/1dUnF3lYUi9VuD8bycRHJHLfNUEhFU2vL/view",
+        "https://drive.google.com/file/d/1ctBqEMgVOaSJDt3qx0ZM04-znKSbuTWt/view",
+        "https://drive.google.com/file/d/1MK_SXOknzjWk5pkhB2WSnDz0Hnkd0XTQ/view",
+        "https://drive.google.com/file/d/1rDe4xcOatOjwipHPV7YMqySN0YJO-_oQ/view",
+        "https://drive.google.com/file/d/12M1WJD3QVv9FooCJjANlLaDgjwlrilJW/view",
+        "https://drive.google.com/file/d/1SQg7HPGud1firXEFgiYRvh7bOIn3SCAn/view",
+        "https://drive.google.com/file/d/10MN_WSsPmSIe_uDckaWiIh94m6iNSLTX/view",
+        "https://drive.google.com/file/d/1JX729VsmkO6PfUKMcEf1NEKGzsN_2FUa/view",
+        "https://drive.google.com/file/d/1xMZUq74usiRAxIyw0viITBW7dTPwS1Q0/view",
+        "https://drive.google.com/file/d/1THKihtiLo5dd6EwGkn80h_YLYAxEw2vs/view",
+        "https://drive.google.com/file/d/1MFSs-W33LLCprXfhO3bfsom_UumFj1Ld/view",
+        "https://drive.google.com/file/d/1OHJKBePcVrgLzHT_e2nFa-Gnr5WRa94M/view",
+        "https://drive.google.com/file/d/1D1Rann6UmlTG8n6Assp_P33YdGHzekdO/view" ],
       bio:"The voice of NYTEGAZE. Full bio coming soon.", facts:{}, socials:[] },
     { id:"gtr1",  name:"Dana",  role:"Guitar", color:"#7cc4ff", photo:"img/members/dana-profile.jpg",
       photos:[
@@ -1304,7 +1325,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-38";
+const APP_BUILD="2026.11.15-39";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
