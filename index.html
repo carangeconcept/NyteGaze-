@@ -203,6 +203,9 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
 .tile .kind{position:absolute;left:6px;bottom:6px;z-index:2;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:6px;background:rgba(4,5,26,.75)}
 .tile .playdot{position:relative;z-index:2;width:38px;height:38px;border-radius:50%;background:rgba(4,5,26,.6);border:2px solid #fff;display:grid;place-items:center;box-shadow:0 0 16px #6a7bff}
 .tile .playdot svg{width:16px;height:16px;margin-left:2px}
+.tile .credit{position:absolute;right:5px;bottom:5px;z-index:3;display:flex;align-items:center;gap:3px;max-width:calc(100% - 10px);padding:2px 7px 2px 3px;border-radius:999px;background:rgba(4,5,26,.8);border:1px solid var(--pc);color:#fff;font-size:10px;font-weight:700;letter-spacing:.02em;line-height:1.4;backdrop-filter:blur(6px);box-shadow:0 0 8px -2px var(--pc);pointer-events:none}
+.tile .credit svg,.pcred svg{width:14px;height:14px;flex:none;fill:none;stroke:var(--pc);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 3px var(--pc))}
+.pcred{display:inline-flex;align-items:center;gap:4px;vertical-align:middle}
 .tile .ico{position:relative;z-index:2;width:34px;height:34px}
 .drive-embed{width:100%;height:420px;border:0;border-radius:14px;background:#fff}
 /* lightbox */
@@ -460,10 +463,12 @@ const BAND = {
   name: "NYTEGAZE",
   bio: "NYTEGAZE is a five-piece band chasing the glow between midnight and morning. Big guitars, bigger choruses, and a sky full of neon.",
   bookingEmail: "nytegaze.ca@gmail.com",
-  // Photographers: any caption or credit that mentions one of these names links to their page.
+  // Photographers: a photo whose caption names one of these gets that photographer's badge on its tile,
+  // and their name links to url. icon: "silence", "aperture" or "cat". Add a new photographer here.
   photographers: {
-    "photography_by_amauri": "https://www.instagram.com/photography_by_amauri/",
-    "shootwithsilence": "https://www.instagram.com/cxoto/",
+    "shootwithsilence":      { short:"Silence", url:"https://www.instagram.com/cxoto/", icon:"silence", color:"#3df6ff" },
+    "photography_by_amauri": { short:"Amauri",  url:"https://www.instagram.com/photography_by_amauri/", icon:"aperture", color:"#ffd86b" },
+    "kitty":                 { short:"Kitty",   url:"", icon:"cat", color:"#ff7fd6" },
   },
   socials: [
     { name:"Instagram", url:"https://www.instagram.com/nytegaze_official/" },
@@ -937,8 +942,17 @@ function renderShows(){
         <div class="lbl"><b>${esc(s.venue)}</b><small>${MON[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} · ${esc(s.city.split(",")[0])}</small></div></div>`; }).join("")}</div>` : `<div class="card"><p class="muted">Past shows and their photos will show up here.</p></div>`;
 }
 // ---- turn a pasted link into something the app can show ----
-function creditHTML(t){ let h=esc(t||""); for(const [n,u] of Object.entries(BAND.photographers||{})){ const re=new RegExp("@?"+n.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"gi");
-  h=h.replace(re,m=>`<a href="${esc(u)}" target="_blank" rel="noopener" style="color:var(--cyan);text-decoration:underline">${m}</a>`); } return h; }
+const PHOTOG_ICONS={
+  silence:'<svg viewBox="0 0 24 24"><path d="M3 9.5h4l5-4.5v14l-5-4.5H3z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>',
+  aperture:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.3 3.3 9.5 11.6M20.7 9.8h-9.6M18.4 18.4 13.6 10.1M9.7 20.7l4.8-8.3M3.3 14.2h9.6M5.6 5.6l4.8 8.3"/></svg>',
+  cat:'<svg viewBox="0 0 24 24"><path d="M4 4.5l4 3.7h8l4-3.7.2 9c0 4.2-3.6 6.8-8.2 6.8s-8.2-2.6-8.2-6.8z"/><circle cx="9" cy="13" r=".9" fill="currentColor"/><circle cx="15" cy="13" r=".9" fill="currentColor"/><path d="M11.2 15.6h1.6l-.8.9zM12 16.5v.8M2 14.5l4.2.5M2.5 17.5l3.9-1M22 14.5l-4.2.5M21.5 17.5l-3.9-1"/></svg>',
+};
+function photogFor(t){ const l=(t||"").toLowerCase(); for(const [k,p] of Object.entries(BAND.photographers||{})) if(l.includes(k.toLowerCase())) return {key:k,...p}; return null; }
+function creditHTML(t){ let h=esc(t||""); let hit=false;
+  for(const [n,p] of Object.entries(BAND.photographers||{})){ const re=new RegExp("@?"+n.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"gi");
+    h=h.replace(re,m=>{ hit=true; const ico=PHOTOG_ICONS[p.icon]||""; const name=p.url?`<a href="${esc(p.url)}" target="_blank" rel="noopener" style="color:var(--cyan);text-decoration:underline">${m}</a>`:m;
+      return `<span class="pcred" style="--pc:${esc(p.color||"#3df6ff")}">${ico}${name}</span>`; }); }
+  return hit?h.replace(/📷\s*/g,""):h; }
 function parseMedia(raw){
   const o=typeof raw==="string"?{url:raw}:{...raw}; const u=(o.url||o.src||"").trim(); let m;
   const wantVideo=o.type==="video"||/#video$/i.test(u);
@@ -962,7 +976,7 @@ function tileHTML(x,i){
   const ico={instagram:ICONS.Instagram,tiktok:ICONS.TikTok,link:ICONS.Email}[x.kind]||"";
   return `<div class="tile tap" data-media="${i}">${x.thumb?`<img src="${esc(x.thumb)}" alt="" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`:""}
     ${x.group==="video"?(x.thumb?PLAYDOT:`<span class="ico">${ico}</span>`):(x.kind==="link"?`<span class="ico">${ico}</span>`:"")}
-    ${x.label?`<span class="kind">${x.label}</span>`:""}</div>`;
+    ${x.label?`<span class="kind">${x.label}</span>`:""}${(p=>p?`<span class="credit" style="--pc:${esc(p.color||"#3df6ff")}" title="Photo: ${esc(p.key)}">${PHOTOG_ICONS[p.icon]||""}${esc(p.short||p.key)}</span>`:"")(photogFor(x.cap))}</div>`;
 }
 function lineupHTML(s){ if(!s.lineup||!s.lineup.length) return "";
   return `<h2>The lineup</h2><div class="card" style="padding:6px 14px">${s.lineup.map(b=>`<div class="row" style="padding:10px 0;border-bottom:1px solid var(--line)">
@@ -1349,7 +1363,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-43";
+const APP_BUILD="2026.11.15-44";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
