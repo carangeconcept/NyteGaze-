@@ -450,7 +450,8 @@ const BAND = {
     { id:"vox",   name:"Naya",  role:"Vocals", color:"#ff7fd6", photo:"img/members/naya-profile.jpg",
       photos:[ "img/members/naya-1.jpg" ],
       bio:"The voice of NYTEGAZE. Full bio coming soon.", facts:{}, socials:[] },
-    { id:"gtr1",  name:"Dana",  role:"Guitar", color:"#7cc4ff", photo:"", photos:[],
+    { id:"gtr1",  name:"Dana",  role:"Guitar", color:"#7cc4ff", photo:"img/members/dana-profile.jpg",
+      photos:[ { url:"img/members/dana-1.jpg", caption:"📷 shootwithsilence" } ],
       bio:"One half of the NYTEGAZE guitar attack. Full bio coming soon.", facts:{}, socials:[] },
     { id:"gtr2",  name:"Augie", role:"Guitar", color:"#a58cff", photo:"img/members/augie-profile.jpg",
       photos:[ "img/members/augie-1.jpg" ],
@@ -1110,7 +1111,7 @@ $("#installX").onclick=()=>{ $("#install").classList.remove("show"); store.set("
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-18";
+const APP_BUILD="2026.11.15-19";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
