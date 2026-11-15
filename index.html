@@ -522,7 +522,24 @@ const BAND = {
         "https://drive.google.com/file/d/1NdWYxXleAVZyFta2HDJ3E-ymroPll-we/view" ],
       bio:"One half of the NYTEGAZE guitar attack. Full bio coming soon.", facts:{}, socials:[] },
     { id:"gtr2",  name:"Augie", role:"Guitar", color:"#a58cff", photo:"img/members/augie-profile.jpg",
-      photos:[ { url:"img/members/augie-1.jpg", caption:"📷 shootwithsilence" } ],
+      photos:[
+        { url:"img/members/augie-1.jpg", caption:"📷 shootwithsilence" },
+        "https://drive.google.com/file/d/1QjZ2U_hUUiVr7u8KRoI5Jx5wSDSNUyP6/view",
+        "https://drive.google.com/file/d/1uqOO-Dwrsc7NMQvFJNhIpX3PaK3dPX0k/view",
+        "https://drive.google.com/file/d/1yhhO4G-D66rEBuHSIjJUpHVN57uC4tPV/view",
+        "https://drive.google.com/file/d/1_WMD3cNTRFPydWTdm66oe7ZPuminAfhv/view",
+        "https://drive.google.com/file/d/10aIsA6QDASkz1MDIZx_JllPHKlZwchIP/view",
+        "https://drive.google.com/file/d/1rQexrsKq3645xmx6GVZ4Y0RgeejTcQxv/view",
+        "https://drive.google.com/file/d/1_uPG7s2f5Expjc7-X61tkTHeM3Y39C0U/view",
+        "https://drive.google.com/file/d/1QtCFTIpvDB7e-S7IeTkI1x12ZLtvoLwN/view",
+        "https://drive.google.com/file/d/1snr75CCk212FPLIlJXBqEQYI6_1gWrOJ/view",
+        "https://drive.google.com/file/d/1RxiscDSAxj51hbJnxvdJYDJuDtpBbH8u/view",
+        "https://drive.google.com/file/d/1Za6sFbgKuVmt7hJikrGuTaIDVwXBF_dY/view",
+        "https://drive.google.com/file/d/1Mctand1mSbJJ38cZlcSQiKJFyQDwS54V/view",
+        "https://drive.google.com/file/d/1cgBxkPaiQemnbCyXduVzDW4jlvlRcSby/view",
+        "https://drive.google.com/file/d/16_j1SoB7U2abA_2tYKLgt48wlc-mL7GW/view",
+        "https://drive.google.com/file/d/1_ALR8hPVY2XPChzzo64WMluAZv-xnH7A/view",
+        "https://drive.google.com/file/d/1q10j5ZMVuNtlLTCAzE-2rdXJ5tDlHZCg/view" ],
       bio:"The other half of the NYTEGAZE guitar attack. Full bio coming soon.", facts:{}, socials:[] },
     { id:"bass",  name:"Josh",  role:"Bass",   color:"#5d78ff", photo:"img/members/josh-profile.jpg",
       photos:[
@@ -1325,7 +1342,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-39";
+const APP_BUILD="2026.11.15-40";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
