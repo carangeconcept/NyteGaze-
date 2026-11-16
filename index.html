@@ -538,7 +538,7 @@ const BAND = {
         { url:"https://drive.google.com/file/d/1MFSs-W33LLCprXfhO3bfsom_UumFj1Ld/view", caption:"📷 photography_by_amauri" },
         { url:"https://drive.google.com/file/d/1OHJKBePcVrgLzHT_e2nFa-Gnr5WRa94M/view", caption:"📷 photography_by_amauri" },
         { url:"https://drive.google.com/file/d/1D1Rann6UmlTG8n6Assp_P33YdGHzekdO/view", caption:"📷 photography_by_amauri" } ],
-      bio:"The voice of NYTEGAZE. Full bio coming soon.", facts:{}, socials:[] },
+      bio:"The voice of NYTEGAZE. Full bio coming soon.", facts:{}, socials:[ { name:"Instagram", url:"https://www.instagram.com/nyte_gazer/" } ] },
     { id:"gtr1",  name:"Dana",  role:"Guitar", color:"#7cc4ff", photo:"img/members/dana-profile.jpg",
       photos:[
         { url:"img/members/dana-1.jpg", caption:"📷 shootwithsilence" },
@@ -562,7 +562,7 @@ const BAND = {
         { url:"https://drive.google.com/file/d/1a2sI81juOq_0QDY5df20C5Uy1RAy5HH0/view", caption:"📷 photography_by_amauri" },
         { url:"https://drive.google.com/file/d/1H14F3z-XkCVHcqy-17d_fMslgJLQG_PA/view", caption:"📷 photography_by_amauri" },
         { url:"https://drive.google.com/file/d/1NdWYxXleAVZyFta2HDJ3E-ymroPll-we/view", caption:"📷 photography_by_amauri" } ],
-      bio:"One half of the NYTEGAZE guitar attack. Full bio coming soon.", facts:{}, socials:[] },
+      bio:"One half of the NYTEGAZE guitar attack. Full bio coming soon.", facts:{}, socials:[ { name:"Instagram", url:"https://www.instagram.com/carnageconcept/" } ] },
     { id:"gtr2",  name:"Augie", role:"Guitar", color:"#a58cff", photo:"img/members/augie-profile.jpg",
       photos:[
         { url:"img/members/augie-1.jpg", caption:"📷 shootwithsilence" },
@@ -582,7 +582,7 @@ const BAND = {
         { url:"https://drive.google.com/file/d/16_j1SoB7U2abA_2tYKLgt48wlc-mL7GW/view", caption:"📷 photography_by_amauri" },
         { url:"https://drive.google.com/file/d/1_ALR8hPVY2XPChzzo64WMluAZv-xnH7A/view", caption:"📷 photography_by_amauri" },
         { url:"https://drive.google.com/file/d/1q10j5ZMVuNtlLTCAzE-2rdXJ5tDlHZCg/view", caption:"📷 photography_by_amauri" } ],
-      bio:"The other half of the NYTEGAZE guitar attack. Full bio coming soon.", facts:{}, socials:[] },
+      bio:"The other half of the NYTEGAZE guitar attack. Full bio coming soon.", facts:{}, socials:[ { name:"Instagram", url:"https://www.instagram.com/augie_music/" } ] },
     { id:"bass",  name:"Josh",  role:"Bass",   color:"#5d78ff", photo:"img/members/josh-profile.jpg",
       photos:[
         { url:"img/members/josh-1.jpg", caption:"📷 shootwithsilence" },
@@ -634,7 +634,7 @@ const BAND = {
         { url:"https://drive.google.com/file/d/13IYtt-wBNSvsLCS8ZUk80WlQzvJKYbTG/view", caption:"📷 photography_by_amauri" },
         { url:"https://drive.google.com/file/d/1BH_XUnttSJ6xbyYXmO2rCXdWQ_gGVkMJ/view", caption:"📷 photography_by_amauri" },
         { url:"https://drive.google.com/file/d/15mvU8d5XsfyJbSQSjQP52g7zlRMqFg8r/view", caption:"📷 photography_by_amauri" } ],
-      bio:"Holds down the low end. Full bio coming soon.", facts:{}, socials:[] },
+      bio:"Holds down the low end. Full bio coming soon.", facts:{}, socials:[ { name:"Instagram", url:"https://www.instagram.com/littlerooster.559/" } ] },
     { id:"drums", name:"???",   role:"Drums",  color:"#c98bff", photo:"", photos:[],
       bio:"Our drummer is a mystery… for now. Stay tuned.", facts:{}, socials:[] },
   ],
@@ -1412,7 +1412,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.15-47";
+const APP_BUILD="2026.11.16-1";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
