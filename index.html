@@ -232,6 +232,10 @@ nav button.on::after{content:"";position:absolute;bottom:-3px;width:8px;height:8
   #lb .stage iframe{height:100%!important;min-height:0!important;width:100%;max-width:none!important;aspect-ratio:auto!important;border-radius:0}
   #lb .stage img,#lb .stage video{max-height:100vh}
 }
+/* member instagram handle */
+.ighandle{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:6px 14px 6px 6px;border-radius:999px;background:rgba(10,12,48,.6);border:1px solid rgba(214,41,118,.55);color:#fff;font-weight:700;font-size:14px;text-decoration:none;box-shadow:0 0 18px -6px #d62976}
+.ighandle .igglyph{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fd5949 45%,#d6249f 60%,#285AEB 90%)}
+.ighandle svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2}
 /* instagram panel */
 .ig{padding:12px 0 10px;overflow:hidden}
 .ig .ighead{display:flex;align-items:center;gap:10px;padding:0 14px 10px}
@@ -1200,12 +1204,13 @@ function renderMember(id){
       ${avatarHtml(m,true).replace('class="avatar"','class="avatar" id="bigAv"')}
       <h1 class="big" style="margin:0">${esc(m.name)}</h1>
       <div style="color:${m.color};letter-spacing:.2em;text-transform:uppercase;font-size:13px;margin-top:4px">${esc(m.role)}</div>
+      ${(ig=>ig?`<a class="ighandle tap" href="${esc(ig.url)}" target="_blank" rel="noopener" aria-label="${esc(m.name)} on Instagram"><span class="igglyph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="#fff" stroke="none"/></svg></span>@${esc(ig.url.replace(/\/+$/,"").split("/").pop())}</a>`:"")((m.socials||[]).find(x=>x.name==="Instagram"))}
       <p class="muted" style="margin-top:14px;text-align:left">${esc(m.bio)}</p>
       ${Object.keys(m.facts||{}).length?`<div class="facts">${Object.entries(m.facts).map(([k,v])=>`<div><small>${esc(k)}</small>${esc(v)}</div>`).join("")}</div>`:""}
     </div>
     <button class="btn full" id="soundOff" style="background:linear-gradient(90deg,${m.color},var(--violet));margin-bottom:12px">♪ Hear their sound</button>
     ${(m.photos||[]).length?`<h2>Photos</h2><div class="media-grid" id="mediaGrid">${m.photos.map(parseMedia).map(tileHTML).join("")}</div>`:""}
-    ${(m.socials||[]).length?`<h2>Follow ${esc(m.name)}</h2><div class="socials">${socialTiles(m.socials)}</div>`:""}
+    ${(m.socials||[]).filter(x=>x.name!=="Instagram").length?`<h2>Follow ${esc(m.name)}</h2><div class="socials">${socialTiles(m.socials.filter(x=>x.name!=="Instagram"))}</div>`:""}
     <div class="row" style="margin-top:16px">
       <button class="btn ghost" style="flex:1" data-go="member-${prev.id}">← ${esc(prev.name)}</button>
       <button class="btn ghost" style="flex:1" data-go="member-${next.id}">${esc(next.name)} →</button>
@@ -1412,7 +1417,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.16-1";
+const APP_BUILD="2026.11.16-2";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
