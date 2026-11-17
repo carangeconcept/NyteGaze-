@@ -1207,11 +1207,11 @@ $("#members").innerHTML=BAND.members.map(m=>`<div class="card tap member" data-g
 /* emoji for a member's fact tile, picked from its label (and sometimes its answer) */
 function instEmoji(t){ t=(t||"").toLowerCase(); return /drum/.test(t)?"🥁":/piano|keys|keyboard|synth/.test(t)?"🎹":/vocal|sing|voice|mic/.test(t)?"🎤":/bass|guitar/.test(t)?"🎸":/violin/.test(t)?"🎻":/sax/.test(t)?"🎷":/trumpet|horn/.test(t)?"🎺":"🎶"; }
 function factEmoji(k,v,m){ const l=(k||"").toLowerCase(), a=(v||"").toLowerCase();
-  const map=[[/hometown|from|born/,"📍"],[/gear|instrument\b|main instrument|axe/,()=>instEmoji(m.role)],[/first instrument/,()=>instEmoji(a)],
+  const map=[[/hometown|from|born/,"📍"],[/first instrument/,()=>instEmoji(a)],[/gear|instrument|main instrument|axe/,()=>instEmoji(m.role)],
     [/playing for|years/,"⏳"],[/influence/,"⚡"],[/nytegaze song/,"🌙"],[/started it|made you want/,"✨"],[/on repeat/,"🔁"],[/guilty/,"🙈"],
     [/desert/,"🏝️"],[/open for/,"🏟️"],[/cover/,"🎭"],[/video game|game/,"🎮"],[/snack|food|eat/,"🌶️"],[/night owl|early bird/,()=>/early|bird|morning/.test(a)&&!/owl/.test(a)?"🌅":"🦉"],
     [/zodiac|sign/,"🔮"],[/2 ?am/,"🌃"],[/superpower/,"🦸"],[/villain/,"😈"],[/walk-?out/,"📣"],[/weird/,"👽"],[/ritual|superstition/,"🔥"],
-    [/talent/,"🪄"],[/not making music|off stage|free time/,"🛋️"],[/rewatch|movie|show you/,"🎬"],[/emoji/,()=>(v||"✦").trim().slice(0,4)],[/ask me/,"💬"]];
+    [/talent/,"🪄"],[/not making music|off stage|free time/,"🛋️"],[/rewatch|movie|show you/,"🎬"],[/emoji/,()=>(v||"✦").trim().slice(0,4)],[/ask me/,()=>/barefoot|shoe|feet/.test(a)?"🦶":"💬"]];
   for(const [re,e] of map) if(re.test(l)) return typeof e==="function"?e():e; return "✦"; }
 function renderMember(id){
   const i=BAND.members.findIndex(x=>x.id===id); const m=BAND.members[i]; if(!m) return go("band");
@@ -1447,7 +1447,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.16-7";
+const APP_BUILD="2026.11.16-8";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
