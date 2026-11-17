@@ -117,8 +117,9 @@ h1.big{font-family:'Metal Mania',cursive;font-weight:400;font-size:40px;line-hei
 .avatar span{position:relative;z-index:1}
 .profile-hero{text-align:center;padding:26px 16px}
 .profile-hero .avatar{width:120px;height:120px;font-size:46px;margin:0 auto 14px}
+.mquote{margin:16px 4px 0;padding:10px 14px;border-left:3px solid var(--mc,#b98cff);text-align:left;font-style:italic;font-size:16px;line-height:1.4;color:#fff;background:rgba(255,255,255,.04);border-radius:0 12px 12px 0}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.facts div{background:rgba(0,0,0,.3);border-radius:12px;padding:10px;font-size:13px}
+.facts div{background:rgba(0,0,0,.3);border-radius:12px;padding:10px;font-size:13px;text-align:left;overflow-wrap:anywhere}
 .facts small{display:block;color:var(--dim);font-size:10px;letter-spacing:.15em;text-transform:uppercase}
 
 /* socials */
@@ -521,6 +522,7 @@ const BAND = {
      photo:  their profile picture (put it in img/members/). Leave "" to show their initial.
      photos: more pictures for their page. Repo files or Google Drive links, same as show media.
      facts / socials: leave empty {} or [] and that part is hidden.
+     quote:  optional one-line message to fans, shown as a quote under their name.
      video:  optional "Meet them" video (Drive link, YouTube, Instagram/TikTok or videos/file.mp4), shown at the top of their page.                          */
   members: [
     { id:"vox",   name:"Naya",  role:"Vocals", color:"#ff7fd6", photo:"img/members/naya-profile.jpg",
@@ -570,7 +572,9 @@ const BAND = {
         { url:"https://drive.google.com/file/d/1a2sI81juOq_0QDY5df20C5Uy1RAy5HH0/view", caption:"📷 photography_by_amauri" },
         { url:"https://drive.google.com/file/d/1H14F3z-XkCVHcqy-17d_fMslgJLQG_PA/view", caption:"📷 photography_by_amauri" },
         { url:"https://drive.google.com/file/d/1NdWYxXleAVZyFta2HDJ3E-ymroPll-we/view", caption:"📷 photography_by_amauri" } ],
-      bio:"One half of the NYTEGAZE guitar attack. Full bio coming soon.", facts:{}, socials:[ { name:"Instagram", url:"https://www.instagram.com/carnageconcept/" } ] },
+      bio:"I’m Dana, from Salem, Massachusetts. My dad was a drummer, and watching him is why I started. Drums came first, then I just kept going. I’ve never had a lesson: drums, bass, guitar, piano, singing and screaming, all self-taught. In NYTEGAZE I hold down guitar. I joined for the chance to play with Naya, whose voice I had to be on stage with, and to reunite with Augie, who I’d already been through the trenches with. And if you’ve seen us live, you’ve noticed: no shoes. Every show barefoot, comfortable and grounded. Feet on the floor, every time.",
+      quote:"It's wild how something we can't see can make us feel so much.",
+      facts:{ "Hometown":"Salem, MA", "Gear":"ESP EC-1000 · beautiful red solid-body mahogany <3", "Playing for":"15+ years", "First instrument":"Drums", "Biggest influence":"Silverstein", "Fave NYTEGAZE song":"Beat It", "The song that started it":"“Juneau” – Funeral For A Friend", "On repeat":"“Pavement” – Dev Lemons", "Dream cover":"More Oliver Tree >:D", "Video game":"World of Warcraft or Zelda: Ocarina of Time", "Go-to snack":"Hot Cheetos + pepperoni-wrapped mozz stick + Chicle ice cream", "Night owl or early bird":"NIGHT OWLLLLLL HOOT HOOT", "Pre-show ritual":"Jumping jacks, football, and shoes off!", "Stage superpower":"Barefoot stage presence + crowd participation", "Ask me about":"My fave cannabis strain :P or what I’m smokin’ on" }, socials:[ { name:"Instagram", url:"https://www.instagram.com/carnageconcept/" } ] },
     { id:"gtr2",  name:"Augie", role:"Guitar", color:"#a58cff", photo:"img/members/augie-profile.jpg",
       photos:[
         { url:"img/members/augie-1.jpg", caption:"📷 shootwithsilence" },
@@ -1209,7 +1213,8 @@ function renderMember(id){
       <h1 class="big" style="margin:0">${esc(m.name)}</h1>
       <div style="color:${m.color};letter-spacing:.2em;text-transform:uppercase;font-size:13px;margin-top:4px">${esc(m.role)}</div>
       ${(ig=>ig?`<a class="ighandle tap" href="${esc(ig.url)}" target="_blank" rel="noopener" aria-label="${esc(m.name)} on Instagram"><span class="igglyph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="#fff" stroke="none"/></svg></span>@${esc(ig.url.replace(/\/+$/,"").split("/").pop())}</a>`:"")((m.socials||[]).find(x=>x.name==="Instagram"))}
-      <p class="muted" style="margin-top:14px;text-align:left">${esc(m.bio)}</p>
+      ${m.quote?`<blockquote class="mquote" style="--mc:${m.color}">“${esc(m.quote)}”</blockquote>`:""}
+      <p class="muted" style="margin-top:14px;text-align:left;line-height:1.55">${esc(m.bio)}</p>
       ${Object.keys(m.facts||{}).length?`<div class="facts">${Object.entries(m.facts).map(([k,v])=>`<div><small>${esc(k)}</small>${esc(v)}</div>`).join("")}</div>`:""}
     </div>
     ${m.video?`<div class="card wu tap" id="meetVid" role="button" aria-label="Play Meet ${esc(m.name)}" style="margin-bottom:12px"><div class="thumb">${(t=>t?`<img src="${esc(t)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:"")(m.videoThumb||parseMedia(m.video).thumb)}<div class="label"><span class="pill">Meet ${esc(m.name)}</span></div><div class="bigplay">${PLAY}</div></div></div>`:""}
@@ -1432,7 +1437,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.16-4";
+const APP_BUILD="2026.11.16-5";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
