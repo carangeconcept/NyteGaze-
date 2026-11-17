@@ -491,6 +491,9 @@ const BAND = {
   instagram: {
     handle: "nytegaze_official",
     url: "https://www.instagram.com/nytegaze_official/",
+    // Live feed from Behold (behold.so, account connected to @nytegaze_official): newest posts load automatically.
+    feed: "https://feeds.behold.so/ciEmDanwOizlboWvssZE",
+    // Backup list, shown if the live feed can't load, and added after the live posts:
     posts: [
       "https://www.instagram.com/p/Dbvx7O7MRsS/",
       "https://www.instagram.com/p/Db1uJ2AmoA-/",
@@ -916,7 +919,7 @@ function renderCountdown(){
   $("#count").innerHTML=[[D,"DAYS"],[Hh,"HRS"],[M,"MIN"],[S,"SEC"]].map(([v,l])=>`<div><b>${String(v).padStart(2,"0")}</b><span>${l}</span></div>`).join("");
 }
 function socialTiles(list){ return list.map(s=>`<a class="soc tap" href="${esc(s.url)}" target="_blank" rel="noopener">${ICONS[s.name]||ICONS.Email}${esc(s.name)}</a>`).join(""); }
-$("#bandSocials").innerHTML=socialTiles(BAND.instagram&&(BAND.instagram.posts||[]).length?BAND.socials.filter(x=>x.name!=="Instagram"):BAND.socials); renderIG();
+$("#bandSocials").innerHTML=socialTiles(BAND.instagram&&(BAND.instagram.posts||[]).length?BAND.socials.filter(x=>x.name!=="Instagram"):BAND.socials); renderIG(); loadIGFeed();
 
 /* Fan wall: shared between every phone and computer, stored in Supabase (table public.fan_wall).
    The publishable key is meant to be public; the table's security rules only allow reading visible posts and adding new ones. */
@@ -1239,11 +1242,15 @@ $("#videoFile").onchange=e=>{ const f=e.target.files[0]; if(!f) return; BAND.vid
 
 
 /* ================= instagram panel ================= */
-function renderIG(){ const g=BAND.instagram; if(!g||!(g.posts||[]).length){ $("#igPanel").remove(); return; }
+function renderIG(live){ const g=BAND.instagram; if(!g) return;
   const id=u=>{ const m=String(u).match(/instagram\.com\/(?:[\w.]+\/)?(p|reel|tv)\/([\w-]+)/); return m?m[2]:null; };
-  const posts=g.posts.map(id).filter(Boolean);
-  $("#igPanel").innerHTML=`<div class="ighead"><div class="igava"><img src="img/logo.webp" alt=""></div>
-      <div style="min-width:0"><b style="display:block">@${esc(g.handle)}</b><span class="muted" style="font-size:12px">Latest on Instagram</span></div>
+  const L=live||store.get("igLive",null);
+  const posts=[...new Set([...((L&&L.posts)||[]).map(p=>id(p.permalink)), ...(g.posts||[]).map(id)].filter(Boolean))].slice(0,12);
+  if(!posts.length){ $("#igPanel").style.display="none"; return; }
+  const pic=L&&L.pic?L.pic:"img/logo.webp", fol=L&&L.followers?`${Number(L.followers).toLocaleString()} followers · `:"";
+  $("#igPanel").style.display="";
+  $("#igPanel").innerHTML=`<div class="ighead"><div class="igava"><img src="${esc(pic)}" alt="" onerror="this.src='img/logo.webp'"></div>
+      <div style="min-width:0"><b style="display:block">@${esc(g.handle)}</b><span class="muted" style="font-size:12px">${fol}Latest on Instagram</span></div>
       <a class="igfollow tap" href="${esc(g.url)}" target="_blank" rel="noopener">Follow</a></div>
     <div class="igrow" id="igRow">${posts.map(p=>`<div class="igpost" data-ig="${esc(p)}"><div class="igload">Loading post…</div></div>`).join("")}</div>
     <div class="ighint">Swipe for more →</div>`;
@@ -1253,7 +1260,12 @@ function renderIG(){ const g=BAND.instagram; if(!g||!(g.posts||[]).length){ $("#
   if("IntersectionObserver" in window){ const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ load(e.target); io.unobserve(e.target); } }),{root:row,rootMargin:"0px 320px"});
     row.querySelectorAll(".igpost").forEach(el=>io.observe(el)); } else row.querySelectorAll(".igpost").forEach(load);
 }
-
+async function loadIGFeed(){ const g=BAND.instagram; if(!g||!g.feed) return;
+  try{ const r=await fetch(g.feed,{cache:"no-store"}); if(!r.ok) return; const j=await r.json();
+    const live={ pic:j.profilePictureUrl||"", followers:j.followersCount||0, posts:(j.posts||[]).map(p=>({permalink:p.permalink})) };
+    const before=JSON.stringify(store.get("igLive",null)); store.set("igLive",live);
+    if(before!==JSON.stringify(live)) renderIG(live);
+  }catch(e){} }
 /* ================= weekly update ================= */
 const updates=()=>(BAND.updates||[]).filter(u=>u&&u.video).slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
 const updKey=u=>(u.date||"")+"|"+(u.title||"");
@@ -1417,7 +1429,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.16-2";
+const APP_BUILD="2026.11.16-3";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
