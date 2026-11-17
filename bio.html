@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#04051a">
+<title>NYTEGAZE · Member questionnaire</title>
+<link rel="icon" href="img/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#04051a;--panel:rgba(14,16,58,.72);--line:rgba(110,130,255,.28);--pink:#ff6fd8;--cyan:#7cc4ff;--violet:#8b62ff;--gold:#ffe28a;--text:#eef1ff;--dim:#a3a8d8;
+  --galaxy:linear-gradient(120deg,#3346ff 0%,#5c8dff 28%,#b98cff 52%,#ff7fd6 66%,#6a5cff 84%,#2d3bff 100%)}
+*{box-sizing:border-box;margin:0}
+body{min-height:100vh;background:radial-gradient(120% 80% at 50% -10%,#1d1a6b 0%,#0a0b33 45%,#04051a 100%) fixed;color:var(--text);font-family:Outfit,system-ui,sans-serif;padding:20px 16px 60px}
+main{max-width:620px;margin:0 auto}
+.logo{display:block;width:180px;margin:6px auto 4px;filter:drop-shadow(0 0 18px rgba(185,140,255,.55))}
+h1{text-align:center;font-size:24px;font-weight:800;letter-spacing:.02em}
+.sub{text-align:center;color:var(--dim);margin:6px auto 18px;max-width:460px;line-height:1.45;font-size:15px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;margin:14px 0;backdrop-filter:blur(10px)}
+h2{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
+.hint{color:var(--dim);font-size:13px;margin-bottom:12px}
+label{display:block;font-weight:600;font-size:15px;margin:14px 0 6px}
+label small{font-weight:400;color:var(--dim)}
+input[type=text],textarea{width:100%;padding:12px 13px;border-radius:12px;border:1px solid var(--line);background:rgba(4,5,26,.7);color:var(--text);font:inherit;font-size:16px}
+textarea{resize:vertical;min-height:96px;line-height:1.45}
+input:focus,textarea:focus{outline:none;border-color:#b98cff;box-shadow:0 0 0 3px rgba(185,140,255,.25)}
+.who{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}
+.who button{padding:12px 6px;border-radius:12px;border:1px solid var(--line);background:rgba(4,5,26,.6);color:var(--text);font:inherit;font-weight:700;cursor:pointer}
+.who button.on{background:var(--galaxy);border-color:transparent;box-shadow:0 0 18px -4px #b98cff}
+.btn{display:block;width:100%;margin-top:18px;padding:15px;border:0;border-radius:14px;background:var(--galaxy);color:#fff;font:inherit;font-weight:800;font-size:17px;cursor:pointer;box-shadow:0 0 24px -6px #b98cff}
+.btn:disabled{opacity:.6}
+.count{float:right;font-size:12px;color:var(--dim);font-weight:400}
+.msg{text-align:center;margin-top:12px;min-height:22px;color:var(--gold)}
+.done{text-align:center;padding:30px 10px}
+.done b{font-size:22px;display:block;margin-bottom:8px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="img/logo.webp" alt="NYTEGAZE">
+  <h1>Member questionnaire</h1>
+  <p class="sub">Your answers go on your page in the NYTEGAZE app. Keep the quick ones short (a few words). Skip anything you don't want to answer.</p>
+
+  <form id="f" novalidate>
+    <div class="card">
+      <h2>Who are you?</h2>
+      <div class="who" id="who"></div>
+    </div>
+    <div id="qs"></div>
+    <button class="btn" id="send" type="submit">Send my answers ✦</button>
+    <div class="msg" id="msg"></div>
+  </form>
+
+  <div class="card done" id="done" hidden>
+    <b>Got it, thank you! ✦</b>
+    <p class="sub" style="margin:0 auto">Your answers were sent. They'll show up on your page in the app soon. Want to change something? Just send the form again; the newest answers win.</p>
+  </div>
+</main>
+<script>
+const API="https://esvvokfsfawespsetiea.supabase.co/rest/v1/member_bios";
+const KEY="sb_publishable_VCwK0mSUrG74lo6j-VseGw_2R17j2id";
+const MEMBERS=["Naya","Dana","Augie","Josh","Drummer"];
+const SECTIONS=[
+  {title:"About you", hint:"Everyone answers these, so the pages match.", qs:[
+    ["hometown","Hometown"],
+    ["gear","Main instrument / gear","e.g. a black Squier Strat, a Höfner bass"],
+    ["years","Years playing"],
+    ["first_instrument","First instrument you ever played"],
+    ["influence","Biggest musical influence"],
+    ["fav_nytegaze_song","Favorite NYTEGAZE song to play live"],
+    ["video_game","Favorite video game"],
+    ["snack","Go-to snack or late-night food order"],
+  ]},
+  {title:"Your music", hint:"Answer the ones you like.", qs:[
+    ["band_song","The song that made you want to be in a band"],
+    ["on_repeat","Song on repeat right now"],
+    ["guilty_pleasure","Guilty-pleasure song"],
+    ["desert_island","Desert-island album"],
+    ["dream_open","Dream band to open for"],
+    ["dream_cover","A cover you'd love NYTEGAZE to play"],
+  ]},
+  {title:"The fun stuff", hint:"Pick 2 or 3 that fit you. These make your page fun.", qs:[
+    ["night_owl","Night owl or early bird?"],
+    ["zodiac","Zodiac sign (and do you believe in it?)"],
+    ["two_am","Favorite thing to do at 2 AM"],
+    ["superpower","Your superpower on stage"],
+    ["villain","Your villain origin story, in one sentence"],
+    ["walkout","Your walk-out song"],
+    ["weird_show","Weirdest thing that's happened at a show"],
+    ["ritual","Pre-show ritual or superstition"],
+    ["hidden_talent","Hidden talent"],
+    ["off_stage","What you do when you're not making music"],
+    ["rewatch","Movie or show you always rewatch"],
+    ["emoji","Most-used emoji"],
+  ]},
+  {title:"For the fans", hint:"", qs:[
+    ["fan_message","A message to fans, in one line","shown as a quote on your page",120],
+    ["ask_me","\"Ask me about…\"","something fans can talk to you about at shows",80],
+    ["bio","Your bio, 2–4 sentences in your own words","how you got into music, what you bring to the band, one funny detail",600,true],
+  ]},
+];
+let who=null;
+const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+$("#who").innerHTML=MEMBERS.map(m=>`<button type="button" data-m="${m}">${m}</button>`).join("");
+$("#who").onclick=e=>{ const b=e.target.closest("button"); if(!b) return; who=b.dataset.m; document.querySelectorAll("#who button").forEach(x=>x.classList.toggle("on",x===b)); $("#msg").textContent=""; restore(); };
+$("#qs").innerHTML=SECTIONS.map(s=>`<div class="card"><h2>${s.title}</h2>${s.hint?`<div class="hint">${s.hint}</div>`:""}
+  ${s.qs.map(([k,l,ph,max,area])=>`<label for="q_${k}">${esc(l)}${area?`<span class="count" id="c_${k}"></span>`:""}</label>
+   ${area?`<textarea id="q_${k}" name="${k}" maxlength="${max||600}" placeholder="${esc(ph||"")}"></textarea>`
+         :`<input type="text" id="q_${k}" name="${k}" maxlength="${max||60}" placeholder="${esc(ph||"")}" autocomplete="off">`}`).join("")}</div>`).join("");
+const fields=[...document.querySelectorAll("#qs input,#qs textarea")];
+const draftKey=()=>"nytegaze-bio-draft-"+(who||"");
+function save(){ if(!who) return; const d={}; fields.forEach(f=>{ if(f.value.trim()) d[f.name]=f.value; }); try{ localStorage.setItem(draftKey(),JSON.stringify(d)); }catch(e){} }
+function restore(){ let d={}; try{ d=JSON.parse(localStorage.getItem(draftKey())||"{}"); }catch(e){} fields.forEach(f=>f.value=d[f.name]||""); counts(); }
+function counts(){ const t=$("#q_bio"); if(t) $("#c_bio").textContent=`${t.value.length}/${t.maxLength}`; }
+fields.forEach(f=>f.addEventListener("input",()=>{ save(); counts(); }));
+$("#f").onsubmit=async e=>{ e.preventDefault();
+  if(!who){ $("#msg").textContent="Tap your name at the top first ✦"; window.scrollTo({top:0,behavior:"smooth"}); return; }
+  const answers={}; fields.forEach(f=>{ const v=f.value.trim(); if(v) answers[f.name]=v; });
+  if(Object.keys(answers).length<3){ $("#msg").textContent="Answer at least a few questions first ✦"; return; }
+  const b=$("#send"); b.disabled=true; b.textContent="Sending…";
+  try{ const r=await fetch(API,{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({member:who,answers})});
+    if(!r.ok){ let m="Couldn't send right now. Your answers are saved on this phone, try again in a minute."; try{ const j=await r.json(); if(j.message&&/slow down|too long/i.test(j.message)) m=j.message; }catch(_){} $("#msg").textContent=m; return; }
+    $("#f").hidden=true; $("#done").hidden=false; window.scrollTo({top:0,behavior:"smooth"});
+  }catch(err){ $("#msg").textContent="No connection. Your answers are saved on this phone; try again when you're online."; }
+  finally{ b.disabled=false; b.textContent="Send my answers ✦"; } };
+</script>
+</body>
+</html>

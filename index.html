@@ -520,7 +520,8 @@ const BAND = {
   /* MEMBERS
      photo:  their profile picture (put it in img/members/). Leave "" to show their initial.
      photos: more pictures for their page. Repo files or Google Drive links, same as show media.
-     facts / socials: leave empty {} or [] and that part is hidden.                          */
+     facts / socials: leave empty {} or [] and that part is hidden.
+     video:  optional "Meet them" video (Drive link, YouTube, Instagram/TikTok or videos/file.mp4), shown at the top of their page.                          */
   members: [
     { id:"vox",   name:"Naya",  role:"Vocals", color:"#ff7fd6", photo:"img/members/naya-profile.jpg",
       photos:[
@@ -1066,7 +1067,7 @@ function drawLB(){
   else if(x.kind==="drivevideo") st.innerHTML=`<iframe src="${esc(x.embed)}" style="height:100%;min-height:60vh;max-width:none" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
   else st.innerHTML=`<iframe src="${esc(x.embed)}" style="aspect-ratio:${x.ratio};max-height:100%" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
   $("#lbCount").textContent=(lbI+1)+" / "+lbItems.length;
-  $("#lbCap").innerHTML=[x.cap?creditHTML(x.cap):"", x.url&&x.kind!=="photo"?`<a href="${esc(x.url.replace(/#video$/,""))}" target="_blank" rel="noopener" style="color:var(--cyan)">Open in ${x.open||x.label||"app"}</a>`:""].filter(Boolean).join(" · ");
+  $("#lbCap").innerHTML=[x.cap?creditHTML(x.cap):"", x.url&&x.kind!=="photo"&&x.kind!=="file"?`<a href="${esc(x.url.replace(/#video$/,""))}" target="_blank" rel="noopener" style="color:var(--cyan)">Open in ${x.open||x.label||"app"}</a>`:""].filter(Boolean).join(" · ");
   $("#lbPrev").style.visibility=$("#lbNext").style.visibility=lbItems.length>1?"visible":"hidden";
 }
 $("#lbClose").onclick=closeLB; $("#lbPrev").onclick=()=>{ lbI=(lbI-1+lbItems.length)%lbItems.length; drawLB(); SFX.tap(); }; $("#lbNext").onclick=()=>{ lbI=(lbI+1)%lbItems.length; drawLB(); SFX.tap(); };
@@ -1211,6 +1212,7 @@ function renderMember(id){
       <p class="muted" style="margin-top:14px;text-align:left">${esc(m.bio)}</p>
       ${Object.keys(m.facts||{}).length?`<div class="facts">${Object.entries(m.facts).map(([k,v])=>`<div><small>${esc(k)}</small>${esc(v)}</div>`).join("")}</div>`:""}
     </div>
+    ${m.video?`<div class="card wu tap" id="meetVid" role="button" aria-label="Play Meet ${esc(m.name)}" style="margin-bottom:12px"><div class="thumb">${(t=>t?`<img src="${esc(t)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:"")(m.videoThumb||parseMedia(m.video).thumb)}<div class="label"><span class="pill">Meet ${esc(m.name)}</span></div><div class="bigplay">${PLAY}</div></div></div>`:""}
     <button class="btn full" id="soundOff" style="background:linear-gradient(90deg,${m.color},var(--violet));margin-bottom:12px">♪ Hear their sound</button>
     ${(m.photos||[]).length?`<h2>Photos</h2><div class="media-grid" id="mediaGrid">${m.photos.map(parseMedia).map(tileHTML).join("")}</div>`:""}
     ${(m.socials||[]).filter(x=>x.name!=="Instagram").length?`<h2>Follow ${esc(m.name)}</h2><div class="socials">${socialTiles(m.socials.filter(x=>x.name!=="Instagram"))}</div>`:""}
@@ -1221,6 +1223,7 @@ function renderMember(id){
   $("#v-member").querySelector(".avatar").classList.add("x");
   const big=$("#v-member .avatar"); big.style.width=big.style.height="120px"; big.style.fontSize="64px"; big.style.margin="0 auto 14px";
   showMedia=(m.photos||[]).map(parseMedia);
+  if(m.video) $("#meetVid").onclick=()=>{ const x=parseMedia(m.video+(/drive\.google\.com/.test(m.video)&&!/#video$/.test(m.video)?"#video":"")); x.cap="Meet "+m.name; openLB([x],0); };
   $("#soundOff").onclick=()=>instrumentSound(m.id==="gtr1"?"Lead Guitar":m.role);
 }
 // each member's page plays a little instrument sample made in Web Audio
@@ -1429,7 +1432,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.16-3";
+const APP_BUILD="2026.11.16-4";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
