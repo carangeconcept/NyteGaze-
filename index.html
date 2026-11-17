@@ -119,8 +119,9 @@ h1.big{font-family:'Metal Mania',cursive;font-weight:400;font-size:40px;line-hei
 .profile-hero .avatar{width:120px;height:120px;font-size:46px;margin:0 auto 14px}
 .mquote{margin:16px 4px 0;padding:10px 14px;border-left:3px solid var(--mc,#b98cff);text-align:left;font-style:italic;font-size:16px;line-height:1.4;color:#fff;background:rgba(255,255,255,.04);border-radius:0 12px 12px 0}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.facts div{background:rgba(0,0,0,.3);border-radius:12px;padding:10px;font-size:13px;text-align:left;overflow-wrap:anywhere}
-.facts small{display:block;color:var(--dim);font-size:10px;letter-spacing:.15em;text-transform:uppercase}
+.facts div{position:relative;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:10px 10px 11px;font-size:13.5px;line-height:1.35;text-align:left;overflow-wrap:anywhere}
+.facts .fico{display:inline-grid;place-items:center;width:30px;height:30px;margin-bottom:6px;border-radius:10px;font-size:17px;line-height:1;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.facts small{display:block;color:var(--dim);font-size:10px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:2px}
 
 /* socials */
 .socials{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
@@ -1203,6 +1204,15 @@ document.addEventListener("click",e=>{ const v=e.target.closest("[data-vote]"); 
 function avatarHtml(m,big){ return `<div class="avatar" style="background:radial-gradient(circle at 30% 30%,${m.color}55,#070926 70%)">${m.photo?`<img src="${esc(m.photo)}" alt="" style="position:relative;z-index:1;width:100%;height:100%;border-radius:50%;object-fit:cover">`:`<span class="gothic">${esc(m.name[0])}</span>`}</div>`; }
 $("#bandBio").textContent=BAND.bio;
 $("#members").innerHTML=BAND.members.map(m=>`<div class="card tap member" data-go="member-${m.id}" style="cursor:pointer">${avatarHtml(m)}<div style="flex:1"><b style="font-size:18px">${esc(m.name)}</b><div style="color:${m.color};font-size:13px;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 0 8px ${m.color}">${esc(m.role)}</div></div><svg viewBox="0 0 24 24" width="20" fill="none" stroke="#a7a3c9" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></div>`).join("");
+/* emoji for a member's fact tile, picked from its label (and sometimes its answer) */
+function instEmoji(t){ t=(t||"").toLowerCase(); return /drum/.test(t)?"🥁":/piano|keys|keyboard|synth/.test(t)?"🎹":/vocal|sing|voice|mic/.test(t)?"🎤":/bass|guitar/.test(t)?"🎸":/violin/.test(t)?"🎻":/sax/.test(t)?"🎷":/trumpet|horn/.test(t)?"🎺":"🎶"; }
+function factEmoji(k,v,m){ const l=(k||"").toLowerCase(), a=(v||"").toLowerCase();
+  const map=[[/hometown|from|born/,"📍"],[/gear|instrument\b|main instrument|axe/,()=>instEmoji(m.role)],[/first instrument/,()=>instEmoji(a)],
+    [/playing for|years/,"⏳"],[/influence/,"⚡"],[/nytegaze song/,"🌙"],[/started it|made you want/,"✨"],[/on repeat/,"🔁"],[/guilty/,"🙈"],
+    [/desert/,"🏝️"],[/open for/,"🏟️"],[/cover/,"🎭"],[/video game|game/,"🎮"],[/snack|food|eat/,"🌶️"],[/night owl|early bird/,()=>/early|bird|morning/.test(a)&&!/owl/.test(a)?"🌅":"🦉"],
+    [/zodiac|sign/,"🔮"],[/2 ?am/,"🌃"],[/superpower/,"🦸"],[/villain/,"😈"],[/walk-?out/,"📣"],[/weird/,"👽"],[/ritual|superstition/,"🔥"],
+    [/talent/,"🪄"],[/not making music|off stage|free time/,"🛋️"],[/rewatch|movie|show you/,"🎬"],[/emoji/,()=>(v||"✦").trim().slice(0,4)],[/ask me/,"💬"]];
+  for(const [re,e] of map) if(re.test(l)) return typeof e==="function"?e():e; return "✦"; }
 function renderMember(id){
   const i=BAND.members.findIndex(x=>x.id===id); const m=BAND.members[i]; if(!m) return go("band");
   const prev=BAND.members[(i+4)%5], next=BAND.members[(i+1)%5];
@@ -1215,7 +1225,7 @@ function renderMember(id){
       ${(ig=>ig?`<a class="ighandle tap" href="${esc(ig.url)}" target="_blank" rel="noopener" aria-label="${esc(m.name)} on Instagram"><span class="igglyph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="#fff" stroke="none"/></svg></span>@${esc(ig.url.replace(/\/+$/,"").split("/").pop())}</a>`:"")((m.socials||[]).find(x=>x.name==="Instagram"))}
       ${m.quote?`<blockquote class="mquote" style="--mc:${m.color}">“${esc(m.quote)}”</blockquote>`:""}
       <p class="muted" style="margin-top:14px;text-align:left;line-height:1.55">${esc(m.bio)}</p>
-      ${Object.keys(m.facts||{}).length?`<div class="facts">${Object.entries(m.facts).map(([k,v])=>`<div><small>${esc(k)}</small>${esc(v)}</div>`).join("")}</div>`:""}
+      ${Object.keys(m.facts||{}).length?`<div class="facts">${Object.entries(m.facts).map(([k,v])=>`<div><span class="fico" aria-hidden="true">${factEmoji(k,v,m)}</span><small>${esc(k)}</small>${esc(v)}</div>`).join("")}</div>`:""}
     </div>
     ${m.video?`<div class="card wu tap" id="meetVid" role="button" aria-label="Play Meet ${esc(m.name)}" style="margin-bottom:12px"><div class="thumb">${(t=>t?`<img src="${esc(t)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:"")(m.videoThumb||parseMedia(m.video).thumb)}<div class="label"><span class="pill">Meet ${esc(m.name)}</span></div><div class="bigplay">${PLAY}</div></div></div>`:""}
     <button class="btn full" id="soundOff" style="background:linear-gradient(90deg,${m.color},var(--violet));margin-bottom:12px">♪ Hear their sound</button>
@@ -1437,7 +1447,7 @@ $("#copyLink").onclick=async()=>{ try{ await navigator.clipboard.writeText(SITE_
 addEventListener("appinstalled",()=>{ store.set("installed",true); hideInstall(); toast("NYTEGAZE is on your home screen ✦"); });
 // Updates: check for a new version on open and whenever the app comes back to the screen,
 // then reload once so fans always run the newest version.
-const APP_BUILD="2026.11.16-6";
+const APP_BUILD="2026.11.16-7";
 if("serviceWorker" in navigator && location.protocol==="https:"){
   const hadController=!!navigator.serviceWorker.controller; let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadController&&!reloaded){ reloaded=true; location.reload(); } });
